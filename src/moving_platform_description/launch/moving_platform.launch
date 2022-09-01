@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+
+  <launch>
+      <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+  <arg name="model" default="$(find moving_platform_description)/urdf/moving_platform.urdf)"/>
+
+   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="headless" value="$(arg headless)"/>
+  </include>
+
+  <!-- Load the urdf into the parameter server. -->
+  <param name="robot_description" textfile="$(find moving_platform_description)/urdf/moving_platform.urdf"/>
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" args="-z 1.0 -unpause -urdf -model moving_platform -param robot_description" respawn="false" output="screen" />
+
+  <!-- Joint state publisher -->
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="moving_platform_joint_publisher_node" >
+      <remap from="joint_states" to="moving_platform_joints" />
+  </node> 
+  <!-- Robot state publisher -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="moving_platform_state_publisher_node" />
+
+  <!-- Load joints yaml file -->
+  <rosparam command="load" file="$(find moving_platform_description)/config/joints.yaml" ns="moving_platform" />
+            
+ 
+ <!-- <node name="moving_platform_controller_spawner" pkg="controller_manager" type="spawner" args="moving_platform_joint_state_controller" /> -->
+
+<!-- Launch transform publisher that publishes the commanded pose data to the moving platform -->
+  <node name="world_base_link_transform_publisher_node" pkg="moving_platform_description" type="world_base_link_transform_publisher.py" output="screen" />
+  <node name="command_moving_platform_trajectories_node" pkg="moving_platform_description" type="command_moving_platform_trajectories.py" output="screen" >
+    <param name = "trajectory_type" value = "straight" />
+    <param name = "trajectory_speed" value = "0.5" />
+    <param name = "trajectory_frequency" value = "100" />
+    <param name = "trajectory_start_position/x" value = "0" />
+    <param name = "trajectory_start_position/y" value = "0" />
+    <param name = "trajectory_start_position/z" value = "0" />
+    <param name = "trajectory_start_orientation/phi" value = "0" />
+    <param name = "trajectory_start_orientation/theta" value = "0" />
+    <param name = "trajectory_start_orientation/psi" value = "0" />
+    <param name = "trajectory_type_vertical" value = "rectiliar_periodic_straight" />
+    <param name = "trajectory_speed_vertical" value = "1.3" />
+    <param name = "trajectory_radius_vertical" value = "10"/>
+  </node> 
+
+
+
+  </launch>

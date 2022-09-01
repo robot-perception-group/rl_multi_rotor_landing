@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+
+  <launch>
+      <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+  <arg name="model" default="$(find moving_platform_description)/urdf/moving_platform.urdf)"/>
+  <arg name = "trajectory_type" default = "circle" />
+  <arg name = "trajectory_speed" default = "1" />
+  <arg name = "trajectory_frequency" default = "100" />
+  <arg name = "trajectory_radius" default = "20"/>
+  <arg name = "trajectory_start_position/x" default = "0" />
+  <arg name = "trajectory_start_position/y" default = "0" />
+  <arg name = "trajectory_start_position/z" default = "0" />
+  <arg name = "trajectory_start_orientation/phi" default = "0" />
+  <arg name = "trajectory_start_orientation/theta" default = "0" />
+  <arg name = "trajectory_start_orientation/psi" default = "0" />
+  <arg name = "trajectory_type_vertical" default = "straights" />
+  <arg name = "trajectory_speed_vertical" default = "0" />
+  <arg name = "trajectory_radius_vertical" default = "0"/>
+  <arg name = "trajectory_speed_lateral" default = "0" />
+  <arg name = "trajectory_radius_lateral" default = "1"/>
+  <arg name = "drone_name" default = "iris"/>
+
+  <!-- Load the urdf into the parameter server. -->
+  <param name="robot_description" textfile="$(find moving_platform_description)/urdf/moving_platform.urdf"/>
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" args="-z 1.0 -unpause -urdf -model moving_platform -param robot_description" respawn="false" output="screen" />
+
+  <!-- Joint state publisher -->
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="moving_platform_joint_publisher_node" >
+      <remap from="joint_states" to="moving_platform_joints" />
+  </node> 
+  <!-- Robot state publisher -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="moving_platform_state_publisher_node" />
+
+  <!-- Load joints yaml file -->
+  <rosparam command="load" file="$(find moving_platform_description)/config/joints.yaml" ns="moving_platform" />
+            
+  
+ <!-- <node name="moving_platform_controller_spawner" pkg="controller_manager" type="spawner" args="moving_platform_joint_state_controller" ns = "moving_platform"/> -->
+
+<!-- Launch transform publisher that publishes the commanded pose data to the moving platform -->
+  <node name="moving_platform_world_base_link_transform_publisher_node" pkg="moving_platform_description" type="world_base_link_transform_publisher.py" output="screen" /> 
+
+
+
+  <node name="command_moving_platform_trajectories_node" pkg="moving_platform_description" type="command_moving_platform_trajectories.py" output="screen" respawn="true">
+    <param name = "drone_name" value = "$(arg drone_name)" />
+    <param name = "trajectory_type" value = "$(arg trajectory_type)" />
+    <param name = "trajectory_speed" value = "$(arg trajectory_speed)" />
+    <param name = "trajectory_frequency" value = "$(arg trajectory_frequency)" />
+    <param name = "trajectory_radius" value = "$(arg trajectory_radius)"/>
+    <param name = "trajectory_start_position/x" value = "$(arg trajectory_start_position/x)" />
+    <param name = "trajectory_start_position/y" value = "$(arg trajectory_start_position/y)" />
+    <param name = "trajectory_start_position/z" value = "$(arg trajectory_start_position/z)" />
+    <param name = "trajectory_start_orientation/phi" value = "$(arg trajectory_start_orientation/phi)" />
+    <param name = "trajectory_start_orientation/theta" value = "$(arg trajectory_start_orientation/theta)" />
+    <param name = "trajectory_start_orientation/psi" value = "$(arg trajectory_start_orientation/psi)" />
+    <param name = "trajectory_type_vertical" value = "$(arg trajectory_type_vertical)" />
+    <param name = "trajectory_speed_vertical" value = "$(arg trajectory_speed_vertical)" />
+    <param name = "trajectory_radius_vertical" value = "$(arg trajectory_radius_vertical)"/>
+    <param name = "trajectory_speed_lateral" value = "$(arg trajectory_speed_lateral)" />
+    <param name = "trajectory_radius_lateral" value = "$(arg trajectory_radius_lateral)"/>
+  </node> 
+
+
+
+  </launch>

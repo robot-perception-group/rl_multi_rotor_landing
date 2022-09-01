@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+      <param name="use_sim_time" value="false"/>
+      <arg name="drone_name" default="iris"/>
+      <group ns="$(arg drone_name)">
+        <node name="vicon_stability_frame_publisher_node" pkg="training_q_learning" type="vicon_publish_stability_axes.py" respawn="true" output="screen">
+        <param name="drone_name" value="$(arg drone_name)"/>
+        </node>
+      </group>  
+</launch>

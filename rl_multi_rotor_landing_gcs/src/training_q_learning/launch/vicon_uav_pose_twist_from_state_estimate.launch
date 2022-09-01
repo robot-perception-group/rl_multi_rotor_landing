@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<launch>
+<param name="use_sim_time" value="false"/>
+<arg name="drone_name" default="iris"/>
+<arg name="fc_name" default="fc0"/>
+  <group ns="$(arg drone_name)">
+    <node name="uav_pose_twist_from_state_estimate" pkg="training_q_learning" type="vicon_uav_pose_twist_from_state_estimate.py" output="screen" >
+        <param name = "drone_name" value = "$(arg drone_name)" />
+        <param name = "fc_name" value = "$(arg fc_name)" />
+    </node> 
+  </group>  
+</launch>

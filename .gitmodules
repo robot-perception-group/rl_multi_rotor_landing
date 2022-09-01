@@ -1,0 +1,13 @@
+[submodule "LibrePilot"]
+	path = submodules/LibrePilot
+	url = https://github.com/robot-perception-group/LibrePilot.git
+	branch = rl_landing_control
+[submodule "rotors_simulator"]
+	path = submodules/rotors_simulator
+	url = https://github.com/ethz-asl/rotors_simulator
+[submodule "mav_comm"]
+	path = submodules/mav_comm
+	url = https://github.com/ethz-asl/mav_comm.git
+[submodule "pid"]
+	path = submodules/pid
+	url = https://github.com/tasbolat1/pid.git

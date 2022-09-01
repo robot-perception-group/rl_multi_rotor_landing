@@ -1,0 +1,126 @@
+<sdf version='1.7'>
+  <model name='moving_platform'>
+    <link name='world_link'>
+      <inertial>
+        <pose>0 0 0.15 0 -0 0</pose>
+        <mass>10.001</mass>
+        <inertia>
+          <ixx>10.0001</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>10</iyy>
+          <iyz>0</iyz>
+          <izz>10.0001</izz>
+        </inertia>
+      </inertial>
+      <collision name='world_link_fixed_joint_lump__bump_sensor_collision_collision'>
+        <pose>0 0 1 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.01</length>
+            <radius>0.5</radius>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='world_link_fixed_joint_lump__moving_platform/base_link_collision_1'>
+        <pose>0 0 0.15 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>2 2 0.3</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='world_link_fixed_joint_lump__moving_platform/IMU_link_collision_2'>
+        <pose>0 0 0.15 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.01 0.01 0.01</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='world_link_fixed_joint_lump__moving_platform/bumper_link_visual'>
+        <pose>0 0 1 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.01</length>
+            <radius>0.5</radius>
+          </cylinder>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Green</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+        </material>
+      </visual>
+      <visual name='world_link_fixed_joint_lump__moving_platform/base_link_visual_1'>
+        <pose>0 0 0.15 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>2 2 0.3</size>
+          </box>
+        </geometry>
+      </visual>
+      <visual name='world_link_fixed_joint_lump__moving_platform/IMU_link_visual_2'>
+        <pose>0 0 0.15 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.01 0.01 0.01</size>
+          </box>
+        </geometry>
+      </visual>
+      <velocity_decay/>
+      <velocity_decay/>
+      <sensor name='main_bumper' type='contact'>
+        <topic>__default_topic__</topic>
+        <contact>
+          <collision>world_link_fixed_joint_lump__bump_sensor_collision_collision</collision>
+          <topic>__default_topic__</topic>
+        </contact>
+        <plugin name='gazebo_ros_bumper_controller' filename='libgazebo_ros_bumper.so'>
+          <bumperTopicName>moving_platform/contact</bumperTopicName>
+          <frameName>moving_platform/bumper_link</frameName>
+          <alwaysOn>1</alwaysOn>
+          <updateRate>100.0</updateRate>
+        </plugin>
+        <pose>0 0 1 0 -0 0</pose>
+        <selfCollide>1</selfCollide>
+        <alwaysOn>1</alwaysOn>
+        <updateRate>100.0</updateRate>
+        <material>Gazebo/Red</material>
+      </sensor>
+      <gravity>1</gravity>
+      <velocity_decay/>
+      <gravity>1</gravity>
+      <sensor name='imu_sensor' type='imu'>
+        <always_on>1</always_on>
+        <update_rate>100</update_rate>
+        <visualize>1</visualize>
+        <topic>__default_topic__</topic>
+        <plugin name='imu_plugin' filename='libgazebo_ros_imu_sensor.so'>
+          <topicName>/moving_platform/imu</topicName>
+          <bodyName>IMU_link</bodyName>
+          <updateRateHZ>30.0</updateRateHZ>
+          <gaussianNoise>0.0</gaussianNoise>
+          <xyzOffset>0 0 0</xyzOffset>
+          <rpyOffset>0 0 0</rpyOffset>
+          <frameName>moving_platform/IMU_link</frameName>
+          <initialOrientationAsReference>0</initialOrientationAsReference>
+        </plugin>
+        <pose>0 0 0.15 0 -0 0</pose>
+      </sensor>
+    </link>
+    <static>0</static>
+    <plugin name='gazebo_ros_control' filename='libgazebo_ros_control.so'>
+      <robotNamespace>/moving_platform</robotNamespace>
+    </plugin>
+  </model>
+</sdf>
