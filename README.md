@@ -29,27 +29,27 @@ To detach from a screen, press ctrl+a and then ctrl+d.
 
 ## Requirements
 ### Linux packages
-Install some basic package first by running the commands
+Install some basic packages first by running the commands
 ```
 sudo apt update
 sudo apt install libgoogle-glog-dev
 sudo apt install screen
 sudo apt install python3-pip
 ```
-### Download the code
+### Downloading the code
 The repository includes several submodules that need to be considered during download. This can be achieved with the following command
 ```
 git clone --recurse-submodules https://github.com/robot-perception-group/rl_multi_rotor_landing.git
 ```
 
 ## Installation
-### Install ROS and Gazebo
+### Installing ROS and Gazebo
 You can find the installation instructions for ROS Noetic and Gazebo  [here](http://wiki.ros.org/noetic/Installation/Ubuntu).
 A list of required ROS packages is given [here](ros_packages_list.txt). You can install a package by using apt as follows
 ```
 sudo apt install ros-noetic-PACKAGE-NAME
 ```
-### Install Python modules and set up usage of virtual environments
+### Installing Python modules and setting up the use of virtual environments
 A list of required additional python modules is given [here](requirements.txt). You can install it by running
 ```
 pip3 install -r requirements.txt
@@ -60,17 +60,17 @@ Activate the virtual environment then by running
 source ~/rl_multi_rotor_landing/rl_multi_rotor_landing_sim/other_files/activate_training_venv.sh
 ```
 
-### Initialize the catkin workspaces
+### Initializing the catkin workspaces
 Make sure ROS is installed, then run
 ```
 cd ~/rl_multi_rotor_landing
 ./init_workspaces.sh
 ```
 
-## Run the code - quick start
+## Running the code - quick start
 For a quick start, you can test the training procedure in simulation.
 
-### Set up a training environment
+### Setting up a training environment
 Prepare the catkin workspace first by running the following commands
 ```
 cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_sim
@@ -97,7 +97,7 @@ source other_files/prepare_terminal_window.sh ROS_PORT GAZEBO_PORT
 where ROS_PORT and GAZEBO_PORT need to match the values used for launching the simulation environment.
 
 
-### Train an agent
+### Training an agent
 There are several steps to be executed during the training curriculum.
 
  1. Launch the simulation training environment as described above. Then run the first step of the curriculum with 
@@ -107,7 +107,7 @@ There are several steps to be executed during the training curriculum.
     ```
  2. After the training has finished, increment the value of the parameter ```number_new_curriculum_steps``` by 1 in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file.    
 
- 3. Update the parameter ```load_training_from``` in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file with the path to the directory where the latest results have been stored.  
+ 3. Update the parameter ```load_training_from``` in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file with the path to the latest results that have been stored.  
     By default, the training results are stored [here](rl_multi_rotor_landing_sim/src/training_q_learning/training_results).
     An example path can look like this 
     ```
@@ -126,7 +126,7 @@ There are several steps to be executed during the training curriculum.
  The script [execute_training_curriculum.py](other_files/execute_training_curriculum.py) automates these steps.
 
 
-### Test an agent
+### Testing an agent
 To test an agent in simulation, update the value ```load_training_from``` in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file with the path to the latest result. Furthermore, replace the respective parameters with the following values
 ```
 self.initial_action_values: dict = {"pitch":0,  #[rad]
@@ -134,17 +134,17 @@ self.initial_action_values: dict = {"pitch":0,  #[rad]
                               "v_z":-0.1,       #[m/s]
                               "yaw":np.pi/4     #[rad]
                               }
-self.done_criteria = {
+        self.done_criteria: dict = {
                 "max_lon_distance" : True,  #Bool
                 "max_lat_distance" : True,  #Bool
                 "max_ver_distance" : True,  #Bool
-                "max_num_timesteps" : False, #Bool
-                "touchdown" : True, #Bool
+                "max_num_timesteps" : True, #Bool
+                "minimum_altitude" : True, #Bool
+                "touchdown_contact" : True, #Bool
                 "success" : False,   #Bool
         }
 self.init_distribution = 'uniform'   
 self.init_altitude: float = 2.5
-self.touchdown_altitude: float = 0.5
 ```
 
 Run the script 
@@ -159,19 +159,19 @@ cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_sim
 ```
 You can use one of the scripts provided in the folder [experiment_evaluation](experiment_evaluation)  to determine the [success rate](experiment_evaluation/success_determination.py) or [duration of training](experiment_evaluation/analyze_training_time.py) of the agent. Specify the platform size as well as the path to the file previously logged with the [analysis script](rl_multi_rotor_landing_sim/src/training_q_learning/scripts/analysis_node_2D.py).
 
-## Run custom training
+## Running a custom training
 Running a custom setup requires several parameters in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file to be adapted. To determine their values required by the multi-resolution discretization scheme as described in the paper, you can run the script [compute_training_parameters.py](rl_multi_rotor_landing_sim/other_files/compute_training_parameters.py).
 
-# Set up experiment on real hardware
+# Setting up an experiment on real hardware
 ## General
 To evaluate an agent on real hardware, a Vicon system is required that is able to track the position and orientation of the UAV and the moving platform using marker detection. ROS nodes are provided that open an interface to the Vicon system to retrieve the required pose and twist data and publish it on the ROS network. Being equipped with a Raspberry Pi 4B running Ubuntu 20, the UAV is able to use this information as a fake GPS signal for the state estimation performed by the onboard flight controller. The RL agent to be evaluated is executed on a laptop running the [LibrePilot](https://www.librepilot.org/site/index.html) Ground Control Station that is used to switch between the different flight modes (manual attitude control, manual velocity control and RL agent), receive telemetry data from the FC and set up virtual limits for the fly zone for safety purposes.
 The UAV is the device in the network that provides the ROS master. 
 
 ## Installation
-### Prepare the Vicon system
+### Preparing the Vicon system
 In order to function properly, the moving platform must be named *moving_platform_1* and the UAV must be named *copter_1* in the Vicon system.
 
-### Prepare the ground control station
+### Preparing the ground control station
 Download the code and initialize the workspaces as described above on the laptop used as ground control station (gcs). 
 Prepare the catkin workspace of the gcs by running 
 ```
@@ -236,7 +236,7 @@ Create a file named *landing_on_moving_platform.launch* with the following conte
 </launch>
 ```
 
-### Prepare the UAV
+### Preparing the UAV
 Install the code on the copter that you plan to use and set it up to automatically connect to the same WiFi as the LibrePilot gcs. Initialize the workspaces as described above.
 Prepare the catkin workspace on the UAV by running 
 ```
@@ -248,7 +248,7 @@ To make sure that the ROS network is initiated as soon as the UAV is powered up,
 
 For our experiments, we equipped the UAV with a LibrePilot Revolution Flight Controller. After creating a connection to the FC using the gcs, you can import the [configuration file](rl_multi_rotor_landing_gcs/other_files/copter_settings.uav) in the gcs by clicking on *File--> Import UAV Settings*. 
 
-## Conduct the flight experiment
+## Conducting the flight experiment
 Power up the UAV and wait until the ROS master has been initialized. Make sure that the Vicon system is able to detect both objects, the moving platform and the copter.
 Then, launch the ROS nodes by running 
 ```
@@ -262,7 +262,7 @@ cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_gcs
 ```
 Now you can take-off, bring the UAV into a hover condition within the fly zone and activate the RL agent. Deactivate it as soon as the copter is close to the moving platform since a touchdown controller with motor deactivation is not implemented.
 
-## Log flight data
+## Logging flight data
 You can record a rosbag file during the flight experiments.
 For this purpose, run the following commands in a terminal window on the gcs laptop.
 
@@ -272,7 +272,7 @@ source other_files/setup.bash
 bash other_files/record_rosbag.bash <Your Flight Experiment ID name>
 ```
 
-## Analyze flight log data
+## Analyzing flight logs
 You can make the recorded rosbag file accessible to further processing in python by executing the script [extract_topics_from_rosbag.py](experiment_evaluation/extract_topics_from_rosbag.py). It will extract the required topics from the rosbag file and store them as .csv-files in a subdirectory with the same name as the flight experiment ID that was used for the rosbag file.
 To extract individual flights from these topics, run [extract_flights_from_rosbag_topics.py](experiment_evaluation/extract_flights_from_rosbag_topics.py).
 The flights can be plotted using the gnuplot script [plot_vicon_flight_data.gnuplot](experiment_evaluation/plot_vicon_flight_data.gnuplot).
