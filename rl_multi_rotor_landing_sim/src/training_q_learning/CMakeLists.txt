@@ -56,18 +56,13 @@ find_package(catkin REQUIRED COMPONENTS
    TwistModified.msg
    TwistStampedModified.msg
    LandingSimulationObjectState.msg
-
-
-
-
  )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#     
-#
-# )
+add_service_files(
+  FILES
+  ResetRandomSeed.srv  
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -172,13 +167,13 @@ include_directories(
    scripts/observation_generator.py
    scripts/training_action_interface.py
    scripts/copy_parameters.py
-   scripts/start_training_q_learning.py
-   scripts/restart_training_q_learning.py
+   scripts/training.py
    scripts/publish_stability_axes.py
    scripts/compute_relative_state_moving_platform_drone.py
    scripts/analysis_node_2D.py
    scripts/test_model_2D.py
-
+   scripts/debug_node.py
+   scripts/log_topic_freqs.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 

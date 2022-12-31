@@ -1,13 +1,15 @@
+'''
+Script uses two instances of one RL agent to control the movement of the drone in longitudinal and lateral direction.
+'''
+
 from training_q_learning.custom_q_learning import QLearning
-from training_q_learning.utils_multiresolution import add_to_dict_refinement_min_max_values_for_state,get_state_grid_idx_from_ros_msg
+from training_q_learning.utils_multiresolution import add_cur_step_lims_of_state,get_discrete_state_from_ros_msg
 from training_q_learning.parameters import Parameters
-from std_msgs.msg import Float64,Float64MultiArray
+from std_msgs.msg import Float64MultiArray
 from copy import deepcopy
 import rospy
-import numpy as np
 from librepilot.msg import TransmitterInfo
 
-M_PI = 3.14159265
 
 #Initialize the parameters defining motion in longitudinal direction.
 parameters_lon = Parameters()
@@ -42,16 +44,18 @@ current_state_idx_x_topic = (topic_prefix+'flight/current_idx_x',Float64MultiArr
 current_state_idx_y_topic = (topic_prefix+'flight/current_idx_y',Float64MultiArray)
 flightmode_topic = (topic_prefix_fc+'TransmitterInfo',TransmitterInfo)
 
-
 #Publishers
 current_state_idx_x_publisher = rospy.Publisher(current_state_idx_x_topic[0],current_state_idx_x_topic[1],queue_size = 0)
 current_state_idx_y_publisher = rospy.Publisher(current_state_idx_y_topic[0],current_state_idx_y_topic[1],queue_size = 0)
 
 class FlightActivated():
     def __init__(self):
+        """Class stores information RL controlled flight is activated."""
         self.flight_activated = False
         return
+
     def read_flightmode(self,msg):
+        """Reads the status of the ROS controlled parameters and stores the value in the storage class."""
         if msg.ROSControlled == 1:
             self.flight_activated = True
         else:
@@ -76,44 +80,59 @@ if __name__ == '__main__':
     q_learning_lon.init_vicon_env(2)
 
     #Initialize dictionaries defining the discretization
-    refinement_steps_dict_lon = {}
-    refinement_steps_dict_lat = {}
+    lims_of_cur_steps_lon = {}
+    lims_of_cur_steps_lat = {}
 
     #Build the dictionaries defining the discretization.
+    #Longitudinal direction
     for state in parameters_lon.uav_parameters.observation_msg_strings.values(): 
-        add_to_dict_refinement_min_max_values_for_state(state,refinement_steps_dict_lon)        
-        assert len(refinement_steps_dict_lon[state]) == len(q_learning_lon.Q_table),"The number of discretization steps that are specified for state "+state+" is "+str(len(refinement_steps_dict_lon[state]))+" and does not match the expected number "+ str(q_learning_lon.Q_table.shape[0])
-    q_learning_lon.refinement_steps_dict = deepcopy(refinement_steps_dict_lon)
+        add_cur_step_lims_of_state(state,lims_of_cur_steps_lon)        
+        assert len(lims_of_cur_steps_lon[state]) == len(q_learning_lon.Q_table),"The number of discretization steps that are specified for state "+state+" is "+str(len(lims_of_cur_steps_lon[state]))+" and does not match the expected number "+ str(q_learning_lon.Q_table.shape[0])
+    q_learning_lon.lims_of_cur_steps = deepcopy(lims_of_cur_steps_lon)
 
+    #Lateral direction 
     for state in parameters_lat.uav_parameters.observation_msg_strings.values(): 
-        add_to_dict_refinement_min_max_values_for_state(state,refinement_steps_dict_lat)        
-        assert len(refinement_steps_dict_lat[state]) == len(q_learning_lon.Q_table),"The number of discretization steps that are specified for state "+state+" is "+str(len(refinement_steps_dict_lat[state]))+" and does not match the expected number "+ str(q_learning_lon.Q_table.shape[0])
+        add_cur_step_lims_of_state(state,lims_of_cur_steps_lat)        
+        assert len(lims_of_cur_steps_lat[state]) == len(q_learning_lon.Q_table),"The number of discretization steps that are specified for state "+state+" is "+str(len(lims_of_cur_steps_lat[state]))+" and does not match the expected number "+ str(q_learning_lon.Q_table.shape[0])
 
     print("shape Q table: ",q_learning_lon.Q_table.shape)
-    print("flight_activated=",flight_activated.flight_activated)
-    check_rate = rospy.Rate(1)
+    print("Flight is activated:",flight_activated.flight_activated)
+
+    #Define the rate with which it is checked if the flight is activated.
+    check_rate = rospy.Rate(5) #hz
+
+    #Run 
     while not rospy.is_shutdown():
         if flight_activated.flight_activated:
             #Get initial state
             print("Triggered reset...")
             current_state_lon = q_learning_lon.env.reset()
-            print("Reset completed!")
             current_state_lon = q_learning_lon.env.convert_observation_msg( current_state_lon)
+            print("Reset completed!")
+
+            #Handle lateral direction
+            #Get latest observations
             current_state_lat = q_learning_lon.env.vicon_object.get_observation()
 
+            #Replace the states with the lateral ones to apply methods of q_learning also for lateral states
             q_learning_lon.env.parameters.uav_parameters = deepcopy(parameters_lat.uav_parameters)
+
+            #Apply normalization
             current_state_lat = q_learning_lon.env.convert_observation_msg(current_state_lat)
 
+            #Switch back to original parameters of longitudinal direction
             q_learning_lon.env.parameters.uav_parameters = deepcopy(parameters_lon.uav_parameters)
 
-            current_state_idx_lon = get_state_grid_idx_from_ros_msg(current_state_lon[0],current_state_lon[1],refinement_steps_dict_lon,q_learning_lon.n_r,parameters_lon)
-            current_state_idx_lat = get_state_grid_idx_from_ros_msg(current_state_lat[0],current_state_lat[1],refinement_steps_dict_lat,q_learning_lon.n_r,parameters_lat)
+            #Get the discrete states
+            current_state_idx_lon = get_discrete_state_from_ros_msg(current_state_lon[0],current_state_lon[1],lims_of_cur_steps_lon,q_learning_lon.n_r,parameters_lon)
+            current_state_idx_lat = get_discrete_state_from_ros_msg(current_state_lat[0],current_state_lat[1],lims_of_cur_steps_lat,q_learning_lon.n_r,parameters_lat)
             print("current_state_idx_lon = ",current_state_idx_lon)
             print("current_state_idx_lat = ",current_state_idx_lat)
             
             done = False
             #Set test_mode_activated to true
             q_learning_lon.env.vicon_object.test_mode_activated = True
+
             #Enter loop
             for _ in range(100000):
                 if done == True:
@@ -122,12 +141,14 @@ if __name__ == '__main__':
                     q_learning_lon.env.parameters.uav_parameters = deepcopy(parameters_lon.uav_parameters)
                     q_learning_lon.env.vicon_object.parameters.uav_parameters = deepcopy(parameters_lon.uav_parameters)
                     current_state_lon = q_learning_lon.env.reset()
-                    q_learning_lon.parameters.uav_parameters = deepcopy(parameters_lat.uav_parameters)
+
                 #Handle lateral motion
+                q_learning_lon.parameters.uav_parameters = deepcopy(parameters_lat.uav_parameters)
                 q_learning_lon.env.parameters.uav_parameters = deepcopy(parameters_lat.uav_parameters)
                 q_learning_lon.env.vicon_object.parameters.uav_parameters = deepcopy(parameters_lat.uav_parameters)
                 current_state_lat = q_learning_lon.env.vicon_object.get_observation()
                 current_state_lat = q_learning_lon.env.convert_observation_msg(current_state_lat)
+                
                 #Handle longitudinal motion
                 q_learning_lon.parameters.uav_parameters = deepcopy(parameters_lon.uav_parameters)
                 q_learning_lon.env.parameters.uav_parameters = deepcopy(parameters_lon.uav_parameters)
@@ -142,7 +163,7 @@ if __name__ == '__main__':
                 print("action_lat =",parameters_lat.uav_parameters.action_strings[action_lat])
 
                 #Perform one training step
-                current_state_idx_lon,current_state_idx_lat, done, _ = q_learning_lon.env.step_2D(action_lon,action_lat,parameters_lon,parameters_lat,refinement_steps_dict_lon,refinement_steps_dict_lat)
+                current_state_idx_lon,current_state_idx_lat, done, _ = q_learning_lon.env.step_2D(action_lon,action_lat,parameters_lon,parameters_lat,lims_of_cur_steps_lon,lims_of_cur_steps_lat)
 
                 print("current_state_idx_lon = ",current_state_idx_lon)
                 print("current_state_idx_lat = ",current_state_idx_lat)

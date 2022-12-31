@@ -1,0 +1,41 @@
+LibrePilot Installation steps:
+
+STEP1: Run the following command to install packages
+sudo apt-get install build-essential curl ccache debhelper git-core git-doc flex graphviz bison libudev-dev libusb-1.0-0-dev libsdl1.2-dev python libopenscenegraph-dev qt5-default qttools5-dev-tools libqt5svg5-dev qtdeclarative5-dev qml-module-qtquick-controls libqt5serialport5-dev qtmultimedia5-dev qtscript5-dev libqt5opengl5-dev qml-module-qtquick-controls qml-module-qtquick-dialogs qml-module-qtquick-xmllistmodel qml-module-qtquick-localstorage qml-module-qtquick-particles2 qml-module-qtquick-window2 qml-module-qtquick2 libosgearth-dev openscenegraph-plugin-osgearth
+
+STEP 2: Run the following command to install 32 bit glibc for ARM toolchain
+sudo apt-get install libc6-i386
+
+STEP 3: Install gcc 7 and g++ 7 and make them default. To set up multiple versions of gcc and g++ and to learn how to manage them follow the steps presented here (https://linuxconfig.org/how-to-switch-between-multiple-gcc-and-g-compiler-versions-on-ubuntu-20-04-lts-focal-fossa)
+
+STEP 4: Make gcc-7 and g++-7 default by running the following commands:
+sudo update-alternatives --config gcc
+sudo update-alternatives --config g++
+
+STEP 5: Change to the LibrePilot directory and run the following make commands to build the gcs and required ressources as they are specified below (consider option -jN where N is the number of parallel threads allowed. This speeds up the process.):
+make arm_sdk_install
+make fw_resource
+make qt_sdk_install
+make fw_simposix
+make gcs
+
+Now everything is installed. You can launch the gcs with the following command (assuming you are in the LibrePilot directory)
+./build/librepilot-gcs_release/bin/librepilot-gcs 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,14 +1,15 @@
 ''' 
-This script creates an interface node which fuses the setpoints for roll pitch yaw rate and vertical velocity  and which arrive over different 
+This script creates an interface node which fuses the setpoints for the roll, pitch, yaw angle and vertical velocity and that arrive via different 
 topics into the RollPitchYawrateThrust message that is required by the roll pitch yawrate thrust controller of the RotorSimulator package.
 
-For this purpose it reads the actions commanded by the RL agent and updates the setpoint values for roll, pitch, v_z and yaw accordingly.
-For v_z and the yaw angle, it publishes the corresponding setpoint values on different topics. These values are then read by 
-PID controllers for v_z and the yaw angle that produce as output a thrust command or a yaw_rate.
-These control efforts are read by this node and the values are also stored.
+For this purpose, the actions commanded by the RL agent are read and the setpoint values for roll, pitch, v_z and yaw are updated accordingly.
 
-Using a publish frequency defined in the launch file, this node creates a roll pitch yaw rate thrust message on the basis of all 
-values, that are currently stored.
+The setpoints for the yaw angle and the vertical velocity are then broadcasted via separate topics. These values are then read by 
+PID controllers for v_z and the yaw angle that produce as output (control effort) a thrust command or a yaw_rate.
+These outputs are read by this node and the values are also stored in a class to be then used for the generation of the roll pitch yawrate thrust message.
+
+Using a publish frequency defined in the launch file, the roll pitch yawrate thrust message is created and published on the basis of all 
+values that are stored at the moment of message generation.
 '''
 
 import rospy
@@ -62,16 +63,16 @@ roll_pitch_yawrate_thrust_publisher = rospy.Publisher(roll_pitch_yawrate_thrust_
 class Interface():
     def __init__(self):
         '''
-        Class contains the variables necessary to provide setpoints to the roll pitch yaw rate thrust controller.
+        Class contains the variables necessary to provide setpoints for the roll pitch yaw rate thrust controller.
         Furthermore, it serves as an interface to store the setpoint values (the input) of the PID controller for v_z and yaw as well
         as the control_effort values (the output) of the aforementioned PID controllers.
         '''
         self.v_z_control_effort = 0
         self.v_z_state = 0
         self.action_values = deepcopy(parameters.uav_parameters.initial_action_values)
-
         self.yaw_control_effort = 0
         self.yaw_state = 0
+        return
 
 
 #Define class instances
@@ -81,21 +82,21 @@ action_values_start = deepcopy(parameters.uav_parameters.initial_action_values)
 
 def read_v_z_control_effort(msg):
     '''
-    Function reads the control effort message that is output by the PID controller for v_z
+    Function reads the control effort message (thrust) that is output by the PID controller for v_z
     '''
     interface.v_z_control_effort = msg.data
     return 
 
 def read_yaw_control_effort(msg):
     '''
-    Function reads the control effort message that is output by the PID controller for yaw
+    Function reads the control effort message (yaw rate) that is output by the PID controller for yaw
     '''
     interface.yaw_control_effort = msg.data
     return 
 
 def read_pose(msg):
     '''
-    Function reads the message containing the relative pose information of moving platform and drone.
+    Function reads the message containing the relative pose information of moving platform and drone in stability axes.
     '''
     q = msg.pose.orientation
     (roll,pitch,yaw) = euler_from_quaternion([q.x,q.y,q.z,q.w])
@@ -107,36 +108,13 @@ def read_pose(msg):
 
 def read_twist(msg):
     '''
-    Function reads the message containing the relative pose information of moving platform and drone.
+    Function reads the message containing the relative pose information of moving platform and drone in stability axes.
     '''
     interface.v_z_state = -msg.twist.linear.z
     msg_v_z_state = Float64()
     msg_v_z_state.data = interface.v_z_state
     v_z_pid_state_publisher.publish(msg_v_z_state)
     return
-
-
-def read_landing_simulation_object_state(msg):
-    '''
-    Function reads landing simulation object message to extract the relative v_z value 
-    and the relative yaw angle.
-    '''
-    interface.v_z_state = msg.twist.twist.linear.vector.z
-    q = msg.pose.pose.orientation
-    (roll,pitch,yaw) = euler_from_quaternion([q.x,q.y,q.z,q.w])
-
-    interface.yaw_state = yaw
-    
-    msg_v_z_state = Float64()
-    msg_v_z_state.data = interface.v_z_state
-    v_z_pid_state_publisher.publish(msg_v_z_state)
-
-    msg_yaw_state = Float64()
-    msg_yaw_state.data = interface.yaw_state
-    yaw_pid_state_publisher.publish(msg_yaw_state)
-    return
-
-
 
 def publish_setpoint_v_z():
     '''
@@ -159,9 +137,7 @@ def publish_setpoint_yaw():
 
 def publish_roll_pitch_yawrate_thrust_msg():
     '''
-    Function publishes the roll pitch yawrate thrust message.
-    The values are the commanded roll and pitch angle as well as the controll efforts determined by the PID controllers
-    for v_z and yaw
+    Function publishes the roll pitch yawrate thrust message based on the values that are currently stored in the interface class.
     '''
     msg = RollPitchYawrateThrust()
     msg.roll = interface.action_values["roll"]
@@ -174,11 +150,10 @@ def publish_roll_pitch_yawrate_thrust_msg():
 
 def process_action(msg):
     '''
-    Function triggers the processing procedure whenever a new msg is received from the agent
+    Function triggers the processing procedure whenever a new msg is received from the agent. This procedure comprises storing the received values for roll, pitch, v_z and yaw as well as publishing the setpoint values for v_z and yaw on this basis.
     '''
     for msg_string in interface.action_values.keys():
         interface.action_values[msg_string] = getattr(msg,msg_string)
-
     publish_setpoint_v_z()
     publish_setpoint_yaw()
     return  
@@ -193,11 +168,10 @@ def reset_action_values(msg):
         print("New interface.action_values after reset: ", interface.action_values)
     return 
 
-          
-
 if __name__ == '__main__':
     #Init nodes and subscribers
     rospy.init_node(node_name)
+
     #Set up subscribers
     action_to_interface_subscriber = rospy.Subscriber(action_to_interface_topic[0],action_to_interface_topic[1],process_action)
     reset_simulation_subscriber = rospy.Subscriber(reset_simulation_topic[0],reset_simulation_topic[1],reset_action_values)
@@ -205,6 +179,7 @@ if __name__ == '__main__':
     yaw_pid_control_effort_subscriber = rospy.Subscriber(yaw_pid_control_effort_topic[0],yaw_pid_control_effort_topic[1],read_yaw_control_effort)
     pose_subscriber = rospy.Subscriber(pose_topic[0],pose_topic[1],read_pose)
     twist_subscriber = rospy.Subscriber(twist_topic[0],twist_topic[1],read_twist)
+    
     #Init rate
     rate = rospy.Rate(publish_hz)
 

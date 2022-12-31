@@ -15,11 +15,11 @@
     <node name="controller_v_z" pkg="pid" type="controller" ns="pid_v_z" output="screen" >
         <param name="node_name" value="pid_v_z" />
         <param name="Kp" value="5.0" />
-        <param name="Ki" value="3.0" />
+        <param name="Ki" value="10.0" />
         <param name="Kd" value="0" />
-        <param name="upper_limit" value="20" />
+        <param name="upper_limit" value="10" />
         <param name="lower_limit" value="0" />
-        <param name="windup_limit" value="5" />
+        <param name="windup_limit" value="10" />
         <param name="max_loop_frequency" value="1000.0" />
         <param name="min_loop_frequency" value="1.0" />
         <param name="topic_from_controller" value="/$(arg drone_name)/training_action_interface/control_effort/v_z/"/>

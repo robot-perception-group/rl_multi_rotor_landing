@@ -8,9 +8,6 @@
   <group ns="$(arg drone_name)">
     <node name="landing_simulation_gym_node" pkg="training_q_learning" type="test_model_2D.py" output="screen" >
         <param name = "drone_name" value = "$(arg drone_name)"  />
-        <param name = "ros_port" value="$(arg ros_port)"/>
-        <param name = "gaz_port" value="$(arg gaz_port)"/>
-        <param name = "ros_ip" value="$(arg ros_ip)"/>
     </node> 
-  </group>
+  </group> 
 </launch>

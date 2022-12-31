@@ -8,6 +8,7 @@ import tf
 import numpy as np
 from std_msgs.msg import Float64, Bool 
 from training_q_learning.parameters import Parameters
+from training_q_learning.srv import ResetRandomSeed, ResetRandomSeedResponse
 
 #Define subscriber topics
 pose_publisher_topic = ('moving_platform/commanded/pose',Pose)
@@ -67,8 +68,7 @@ class TrajectoryGenerator:
         self.psi = self.trajectory_start_orientation['psi']
 
         self.t = 0
-        self.delta_t = 1 / self.trajectory_frequency #sec
-        np.random.seed(self.parameters.rl_parameters.seed_init)
+        self.delta_t = 1 / self.trajectory_frequency #sec        
 
         self.pose_publisher = rospy.Publisher(pose_publisher_topic[0],pose_publisher_topic[1],queue_size = 3)
         self.gazebo_pose_publisher = rospy.Publisher(gazebo_pose_publisher_topic[0],gazebo_pose_publisher_topic[1],queue_size = 3)
@@ -112,7 +112,6 @@ class TrajectoryGenerator:
         v = self.v
         return x,y,u,v
 
-    
     def compute_trajectory_rectiliar_periodic_straight(self):
         """Function computes a rectiliar periodic trajectory for the moving platform."""
         omega = self.trajectory_speed / (self.trajectory_radius)
@@ -138,30 +137,33 @@ class TrajectoryGenerator:
 
     def compute_trajectory(self):
         """Function computes the trajectory based on arguments trajectory_type, trajectory_velocity, trajectory_frequency """
+        if self.trajectory_type in ["circle","straight","rectilinear_periodic_straight"] and self.trajectory_type_vertical in ["rectilinear_periodic_straight","straight"]:
+            #Define horizontal movement
+            if self.trajectory_type == "circle":
+                (x,y,u,v) = self.compute_trajectory_circle()
+                
+            if self.trajectory_type == "straight":
+                (x,y,u,v) = self.compute_trajectory_straight()
 
-        #Define horizontal movement
-        if self.trajectory_type == "circle":
-            (x,y,u,v) = self.compute_trajectory_circle()
+            if self.trajectory_type == "rectilinear_periodic_straight":
+                (x,y,u,v) = self.compute_trajectory_rectiliar_periodic_straight()
+
+            if self.trajectory_type_vertical == "rectilinear_periodic_straight":
+                (z,w) = self.compute_vertical_trajectory_rectiliar_periodic_straight()
             
-        if self.trajectory_type == "straight":
-            (x,y,u,v) = self.compute_trajectory_straight()
+            if self.trajectory_type_vertical == "straight":
+                (z,w) = self.compute_vertical_trajectory_straight()
 
-        if self.trajectory_type == "rectiliar_periodic_straight":
-            (x,y,u,v) = self.compute_trajectory_rectiliar_periodic_straight()
-
-        if self.trajectory_type_vertical == "rectiliar_periodic_straight":
-            (z,w) = self.compute_vertical_trajectory_rectiliar_periodic_straight()
-        
-        if self.trajectory_type_vertical == "straight":
-            (z,w) = self.compute_vertical_trajectory_straight()
-
-        self.x = x
-        self.y = y
-        self.z = z  
-        self.u = u
-        self.v = v   
-        self.w = w    
-        self.t = self.t + self.delta_t  
+            self.x = x
+            self.y = y
+            self.z = z  
+            self.u = u
+            self.v = v   
+            self.w = w    
+            self.t = self.t + self.delta_t  
+        else:
+            raise ValueError
+            print("Specified horizontal or vertical trajectory type not known! Aborting...")
         return
 
 
@@ -195,19 +197,28 @@ class TrajectoryGenerator:
         msg_gazebo.twist.linear.y = self.v
         msg_gazebo.twist.linear.z = self.w
 
-
         self.gazebo_pose_publisher.publish(msg_gazebo)
         self.set_state_service(msg_gazebo)
         return
     
     def read_reset(self,msg):
-        """Function resets time to a random value within an interval of episode_length whenever it is called."""
-        self.t = np.random.uniform(0,self.parameters.rl_parameters.max_num_timesteps_episode*self.parameters.rl_parameters.running_step_time)
+        """Function resets time to a random value within an interval of episode_length whenever the message value is true."""
+        if msg.data:
+            self.t = np.random.uniform(0,self.parameters.rl_parameters.max_num_timesteps_episode*self.parameters.rl_parameters.running_step_time)
         return
+    
+    def reset_random_seed(self,req):
+        """Function handles the service request to reset the seed for the random number generator."""
+        seed = None if req.seed == 'None' else int(req.seed)
+        print("Set seed for random initial values to",seed)
+        np.random.seed(seed)
+        return ResetRandomSeedResponse()
+
 
 if __name__ == '__main__':
     rospy.init_node('trajectory_generator_node', anonymous=True)
     trajectory_generator = TrajectoryGenerator()
+    s = rospy.Service('/moving_platform/reset_random_seed', ResetRandomSeed, trajectory_generator.reset_random_seed)
     trajectory_speed_subscriber = rospy.Subscriber(trajectory_speed_topic[0],trajectory_speed_topic[1],trajectory_generator.read_trajectory_speed)
     trajectory_radius_subscriber = rospy.Subscriber(trajectory_radius_topic[0],trajectory_radius_topic[1],trajectory_generator.read_trajectory_radius)
     trajectory_speed_lateral_subscriber = rospy.Subscriber(trajectory_speed_lateral_topic[0],trajectory_speed_lateral_topic[1],trajectory_generator.read_trajectory_speed_lateral)

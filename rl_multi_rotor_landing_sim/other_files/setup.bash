@@ -1,10 +1,12 @@
+#This script sets the necessary environment variables and sources the appropriate files to run the ros package
 
 #Get initial folder where script is called from
 initial_wd=`pwd`
+
 #Navigate into the folder where this script is stored 
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd $parent_path
-echo "parent_path=$parent_path"
+
 #source catkin workspace
 source ../devel/setup.bash
 

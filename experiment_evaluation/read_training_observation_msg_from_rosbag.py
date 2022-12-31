@@ -1,14 +1,12 @@
+"""
+This script computes the duration of one round of training and applies elementary statistics on it. 
+"""
+
 import rosbag
 import numpy as np
 import os
 import csv
 from os.path import expanduser
-
-
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-
 
 #Parameters
 bag_file_path = '/home/pgoldschmid/Desktop/experiments/descend_trajectories/vmp_1_2_rmp_2_fag_17_18_rectiliar_periodic_straight_vmp_0_4_rmp_2_yaw_0.bag'
@@ -38,6 +36,7 @@ for topic, msg, t in bag.read_messages(topics=['/hummingbird/training/reset_simu
     t_reset_list.append(t.to_sec())
 bag.close()
 print(t_reset_list)
+
 #Convert to np arrays
 rel_p_x = np.array(rel_p_x_list)
 rel_p_y = np.array(rel_p_y_list)
@@ -45,10 +44,8 @@ rel_p_z = np.array(rel_p_z_list)
 t_rel = np.array(t_rel_list)
 t_reset = np.array(t_reset_list)
 
-
 alt_diff = np.diff(rel_p_z)
 idx_reset = np.where(np.abs(alt_diff)>1 )
-# print(idx_reset)
 
 #Iterate through each episode
 idx_starts = []
@@ -61,9 +58,8 @@ for i in range(len(t_reset)-1):
 print(idx_starts)
 print(idx_stops)
 
+#Iterate through each data point
 for i in range(1,len(idx_starts)-1):
-    #Iterate through each data point
-    
     #Create empty file to be filled with data
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),file_base_path,id_name+"_"+str(i)+'.dat')
     print(file_path)

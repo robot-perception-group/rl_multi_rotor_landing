@@ -1,10 +1,10 @@
 """This scripts defines a conversion node that converts messages of type roll_pitch_yawrate_thrust to uavpose"""
+
 from uav_msgs.msg import uav_pose
 from copy import deepcopy
 from geometry_msgs.msg import PoseStamped, TwistStamped
 import rospy
 from training_q_learning.parameters import Parameters
-
 
 #Get parameters
 node_name='uav_pose_twist_from_state_estimate'
@@ -18,9 +18,6 @@ uav_twist_topic = ('/'+drone_name+'/twist',TwistStamped)
 
 # Script variables
 parameters = Parameters()
-M_PI = 3.141592
-
-
 
 #Class definition
 class UAVPoseFromStateEstimate():
@@ -39,40 +36,9 @@ class UAVPoseFromStateEstimate():
         self.uav_twist_publisher = rospy.Publisher(uav_twist_topic[0],uav_twist_topic[1],queue_size=0)
         return
 
-    
-    def transform_ned_to_enu(self):
-        """
-        Function converts ned to enu
-        """
-        self.uav_pose.header.frame_id = "world"
-        self.uav_pose.header.stamp = rospy.Time.now()
-        self.uav_pose.pose.position.x = self.state_estimate.position.x
-        self.uav_pose.pose.position.y = self.state_estimate.position.y
-        self.uav_pose.pose.position.z = self.state_estimate.position.z
-
-
-        self.uav_pose.pose.orientation.x = self.state_estimate.orientation.x
-        self.uav_pose.pose.orientation.y = self.state_estimate.orientation.y
-        self.uav_pose.pose.orientation.z = self.state_estimate.orientation.z
-        self.uav_pose.pose.orientation.w = self.state_estimate.orientation.w
-
-
-        self.uav_twist.header.frame_id = "world"
-        self.uav_twist.header.stamp = rospy.Time.now()
-        self.uav_twist.twist.linear.x = self.state_estimate.velocity.x
-        self.uav_twist.twist.linear.y = self.state_estimate.velocity.y
-        self.uav_twist.twist.linear.z = self.state_estimate.velocity.z
-
-        self.uav_twist.twist.angular.x = self.state_estimate.angVelocity.x
-        self.uav_twist.twist.angular.y = self.state_estimate.angVelocity.y
-        self.uav_twist.twist.angular.z = self.state_estimate.angVelocity.z
-
-        return
-
     def read_state_estimate(self,msg):
         """Function processes the msgs received on the topic"""
         self.state_estimate = deepcopy(msg)
-        self.transform_ned_to_enu()
         self.uav_pose_publisher.publish(self.uav_pose)
         self.uav_twist_publisher.publish(self.uav_twist)
         return

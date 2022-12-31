@@ -56,10 +56,6 @@ find_package(catkin REQUIRED COMPONENTS
    TwistModified.msg
    TwistStampedModified.msg
    LandingSimulationObjectState.msg
-
-
-
-
  )
 
 ## Generate services in the 'srv' folder
@@ -169,28 +165,14 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
  catkin_install_python(PROGRAMS
-   scripts/observation_generator.py
-   scripts/training_action_interface.py
-   scripts/copy_parameters.py
-   scripts/start_training_q_learning.py
-   scripts/restart_training_q_learning.py
-   scripts/publish_stability_axes.py
-   scripts/compute_relative_state_moving_platform_drone.py
-   scripts/analysis_node_2D.py
-   scripts/test_model_2D.py
    scripts/vicon_action_to_uavpose.py
    scripts/vicon_interface.py
    scripts/vicon_publish_stability_axes.py
    scripts/vicon_compute_relative_state_moving_platform_drone.py
    scripts/vicon_observation_generator.py
    scripts/vicon_test_model_2D.py
-   scripts/vicon_publish_mp_setpoints.py
    scripts/vicon_uav_pose_twist_from_state_estimate.py
    scripts/vicon_publish_state_estimate_copter_frame.py
-
-
-
-
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 

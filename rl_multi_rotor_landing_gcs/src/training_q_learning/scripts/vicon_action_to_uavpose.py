@@ -1,10 +1,11 @@
 """This scripts defines a conversion node that converts messages of type roll_pitch_yawrate_thrust to uavpose"""
+
 from uav_msgs.msg import uav_pose
 from training_q_learning.msg import Action as ActionMsg
 from copy import deepcopy
 import rospy
 from training_q_learning.parameters import Parameters
-
+import numpy as np
 
 #Get parameters
 node_name='action_to_uavpose'
@@ -18,8 +19,6 @@ uav_pose_topic = ('/'+fc_name+'/command',uav_pose)
 # Script variables
 parameters = Parameters()
 M_PI = 3.141592
-
-
 
 #Class definition
 class ActionToUavPose():
@@ -38,8 +37,8 @@ class ActionToUavPose():
 
     def convert(self):
         """
-        Funcion assigns the values of roll and pitch to the velocity field of the uav pose message. yaw angle and thrust are set to 
-        0 because they will be provided by the low level controller of the fc.
+        Funcion assigns the values of roll, pitch and yaw to the velocity field of the uav pose message. The commanded vertical velocity is
+        assigned to the thrust field of the uav_pose message.
         ---
         uav_pose msg:
         Header header
@@ -52,14 +51,14 @@ class ActionToUavPose():
         int32 flightmode
         geometry_msgs/Point POI
         """
-        self.uav_pose.velocity.x = (180/M_PI)*self.action.roll
-        self.uav_pose.velocity.y =  (180/M_PI)*self.action.pitch
-        self.uav_pose.velocity.z = (180/M_PI)*self.action.yaw
+        self.uav_pose.velocity.x = np.rad2deg(self.action.roll)
+        self.uav_pose.velocity.y =  np.rad2deg(self.action.pitch)
+        self.uav_pose.velocity.z = np.rad2deg(self.action.yaw)
         self.uav_pose.thrust = -self.action.v_z
         self.uav_pose.flightmode = 4
         return
 
-    def read_action_msg(self,msg):
+    def read_action_msg(self,msg:ActionMsg):
         """Function processes the msgs received on the topic"""
         self.action = deepcopy(msg)
         self.convert()

@@ -1,52 +1,45 @@
-#!/usr/bin/env python  
+'''
+This scripts defines a ROS node that  provides information about the moving platform and the drone that are detected by the Vicon system. 
+The information for the drone are retrieved from the state estimate that is determined by the drone's flight computer.
+The information for the moving platform is directly received from the Vicon system.
+NOTE: The frame the data arrives in is "world". Unlike the simulation, where this was an ENU frame, "world" is no a NED frame.
+
+
+It publishes the relative position, velocity and acceleration on separate topics.
+The coordinate frame in which the values are displayed is the stability axes frame
+    - Relative position: drone_name/landing_simulation/relative_moving_platform_drone/state/twist/pose
+    - Relative velocity: drone_name/landing_simulation/relative_moving_platform_drone/state/twist/twist
+    - Relative acceleration: drone_name/landing_simulation/relative_moving_platform_drone/state/twist/acceleration
+
+Furthermore, this node publishes on two different topics the entire movement information required for the landing process for both, 
+the drone and the moving platform in stability axes and the world frame.
+    - Drone: drone_name/landing_simulation/drone/state
+    - Moving platform: drone_name/landing_simulation/moving_platform/state                      
+'''
+
 import rospy
-from std_msgs.msg import Float64, Float64MultiArray
+from std_msgs.msg import Float64MultiArray
 import tf2_ros
 from geometry_msgs.msg import TwistStamped, Vector3Stamped, PoseStamped,  Quaternion
 from sensor_msgs.msg import Imu
-
 import tf2_geometry_msgs 
-from tf.transformations import euler_from_quaternion, quaternion_multiply
+from tf.transformations import euler_from_quaternion, quaternion_multiply, quaternion_inverse
 from training_q_learning.msg import LandingSimulationObjectState
 import numpy as np
 from copy import deepcopy
-
-M_PI = 3.14159265
-
-'''
-This scripts defines a ROS node that  provides information about the moving platform and the drone that are simulated in Gazebo. 
-
-It publishes the relative position, velocity and acceleration on separate topics.
-The coordinate frame in which the values are displayed is the stability axis (stability axis frame is called "stability axis")
-    - Relative position: drone_name/landing_simulation/relative_moving_platform_drone/state/twist/pose)
-    - Relative velocity: drone_name/landing_simulation/relative_moving_platform_drone/state/twist/twist)
-    - Relative acceleration: drone_name/landing_simulation/relative_moving_platform_drone/state/twist/acceleration)
-
-Furthermore, this node publishes on two different topics the entire movement information required for the landing process for both, 
-the drone and the moving platform.
-    - Drone: drone_name/landing_simulation/drone/state
-    - Moving platform: drone_name/landing_simulation/moving_platform/state
-
-'''
-
-
 
 #Parameters
 node_name='vicon_compute_relative_state_moving_platform_drone_node'
 vicon_relative_state_moving_platform_drone_hz = float(rospy.get_param(rospy.get_namespace()+node_name+'/vicon_relative_state_moving_platform_drone_hz',"10"))
 drone_name = rospy.get_param(rospy.get_namespace()+node_name+'/drone_name','iris')
 
-
-#Topic and frame definitions
-
 #Subscriber topics
 # drone_pose_topic = ('/vicon/drone/pose',PoseStamped)  #Vicon data
 # drone_twist_topic = ('/vicon/drone/twist',TwistStamped) #Vicon data
-drone_pose_topic = ('/'+drone_name+'/pose',PoseStamped)
-drone_twist_topic = ('/'+drone_name+'/twist',TwistStamped)
-moving_platform_pose_topic = ('/vicon/moving_platform/pose',PoseStamped)
-moving_platform_twist_topic = ('/vicon/moving_platform/twist',TwistStamped)
-
+drone_pose_topic = ('/'+drone_name+'/pose',PoseStamped) #State estimate data, NED frame
+drone_twist_topic = ('/'+drone_name+'/twist',TwistStamped) #State estimate data, NED frame
+moving_platform_pose_topic = ('/vicon/moving_platform/pose',PoseStamped) #NED frame, eventhough frame_id says "world" (which usually means ENU)
+moving_platform_twist_topic = ('/vicon/moving_platform/twist',TwistStamped) #NED frame, eventhough frame_id says "world" (which usually means ENU)
 
 #Publisher topics
 relative_vel_state_topic = ('/vicon/relative_moving_platform_drone/state/twist',TwistStamped)
@@ -69,14 +62,6 @@ moving_platform_state_publisher = rospy.Publisher(moving_platform_state_topic[0]
 vicon_frame = 'world'
 target_frame = drone_name+'/stability_axes'
 
-
-class OrientationState():
-    def __init__(self):
-        """Simple class for storing euler angles."""
-        self.roll = 0
-        self.pitch = 0
-        self.yaw = 0
-
 #Class definition
 class PoseTwistAccelerationState():
     def __init__(self):
@@ -93,8 +78,6 @@ class PoseTwistAccelerationState():
         self.linear_acceleration.header.frame_id = 'world'
         return
 
-
-
 #Class initialization
 drone_state_original = PoseTwistAccelerationState()
 moving_platform_state_original = PoseTwistAccelerationState()
@@ -107,34 +90,33 @@ moving_platform_orientation_in_world_frame =PoseTwistAccelerationState()
 
 
 def read_drone_pose(msg):
+    """Reads drone pose message and stores the data in storage class."""
     drone_state_original.pose = msg
     return
 
 def read_drone_twist(msg):
-    
+    """Reads drone twist message and stores data in stroage class."""
     drone_state_original.twist.twist.linear.vector.x = msg.twist.linear.x
     drone_state_original.twist.twist.linear.vector.y = msg.twist.linear.y
     drone_state_original.twist.twist.linear.vector.z = msg.twist.linear.z
     return
 
 def read_moving_platform_pose(msg):
-
+    """Reads pose message of moving platform and stores data in storage class."""
     moving_platform_state_original.pose = msg
     return
 
 def read_moving_platform_twist(msg):
-
+    """Reads twist message of moving platform and stores data in storage class."""
     moving_platform_state_original.twist.twist.linear.vector.x = msg.twist.linear.x
     moving_platform_state_original.twist.twist.linear.vector.y = msg.twist.linear.y
     moving_platform_state_original.twist.twist.linear.vector.z = msg.twist.linear.z
     return
 
-
 def compute_relative_vel_msg():
     '''
     Function computes the relative velocity vector between the moving platform and the drone.
     '''
-
     rel_vel_msg = TwistStamped()
     rel_vel_msg.header.stamp = rospy.Time.now()
     rel_vel_msg.header.frame_id = target_frame
@@ -155,16 +137,19 @@ def compute_relative_pos_msg():
     p_y = moving_platform_state_in_target_frame.pose.pose.position.y-drone_state_in_target_frame.pose.pose.position.y
     p_z = moving_platform_state_in_target_frame.pose.pose.position.z-drone_state_in_target_frame.pose.pose.position.z
     
+    #Determine relative rotation from moving platform to drone using quaterions
     #Initialize array for quaternions
-    q_0_inv = [0,0,0,1]
+    q_0 = [0,0,0,1]
     q_1 = [0,0,0,1]
 
-    #Create inverse of q_1 by making the real component negative
-    q_0_inv[0] = moving_platform_state_in_target_frame.pose.pose.orientation.x
-    q_0_inv[1] = moving_platform_state_in_target_frame.pose.pose.orientation.y
-    q_0_inv[2] = moving_platform_state_in_target_frame.pose.pose.orientation.z
-    q_0_inv[3] = -moving_platform_state_in_target_frame.pose.pose.orientation.w
-
+    #Create q_0 and q_0_inv
+    q_0[0] = moving_platform_state_in_target_frame.pose.pose.orientation.x
+    q_0[1] = moving_platform_state_in_target_frame.pose.pose.orientation.y
+    q_0[2] = moving_platform_state_in_target_frame.pose.pose.orientation.z
+    q_0[3] = moving_platform_state_in_target_frame.pose.pose.orientation.w
+    q_0_inv = quaternion_inverse(q_0)
+    
+    #Create q_1
     q_1[0] = drone_state_in_target_frame.pose.pose.orientation.x
     q_1[1] = drone_state_in_target_frame.pose.pose.orientation.y
     q_1[2] = drone_state_in_target_frame.pose.pose.orientation.z
@@ -187,28 +172,10 @@ def compute_relative_pos_msg():
     rel_pose_msg.pose.position.z = p_z
     rel_pose_msg.pose.orientation = q_new
 
-    
-    
     msg = Float64MultiArray()
-    msg.data = (180/M_PI)*np.array(euler_from_quaternion([q_new.x,q_new.y,q_new.z,q_new.w]))
+    msg.data = (180/np.pi)*np.array(euler_from_quaternion([q_new.x,q_new.y,q_new.z,q_new.w]))
     relative_rpy_publisher.publish(msg)
     return rel_pose_msg
-
-def compute_relative_acc_msg():
-    '''
-    Function computes the relative acceleration vector between the moving platform and the drone.
-    '''
-    a_x = moving_platform_state_in_target_frame.linear_acceleration.vector.x-drone_state_in_target_frame.linear_acceleration.vector.x
-    a_y = moving_platform_state_in_target_frame.linear_acceleration.vector.y-drone_state_in_target_frame.linear_acceleration.vector.y
-    a_z = moving_platform_state_in_target_frame.linear_acceleration.vector.z-drone_state_in_target_frame.linear_acceleration.vector.z
-    rel_acc_msg = Imu()
-    rel_acc_msg.header.stamp = rospy.Time.now()
-    rel_acc_msg.header.frame_id = target_frame
-    rel_acc_msg.linear_acceleration.x = a_x
-    rel_acc_msg.linear_acceleration.y = a_y
-    rel_acc_msg.linear_acceleration.z = a_z
-    return rel_acc_msg
-
 
 def compute_landing_simulation_object_state_msg(landing_simulation_object):
     '''
@@ -221,6 +188,7 @@ def compute_landing_simulation_object_state_msg(landing_simulation_object):
     landing_object_state_msg.twist.twist.angular = Vector3Stamped()
 
     landing_object_state_msg.header.stamp = rospy.Time.now()
+
     #Check if all coordinate frames are the same
     if landing_simulation_object.pose.header.frame_id == landing_simulation_object.twist.header.frame_id:
         landing_object_state_msg.header.frame_id = landing_simulation_object.pose.header.frame_id
@@ -276,20 +244,15 @@ if __name__ == '__main__':
             moving_platform_state_in_target_frame.twist.twist.angular = tf2_geometry_msgs.do_transform_vector3(moving_platform_state_original.twist.twist.angular,trans_world_to_target_frame)
             moving_platform_state_in_target_frame.twist.header.frame_id = target_frame
 
-            
             drone_state_in_target_frame.pose = tf2_geometry_msgs.do_transform_pose(drone_state_original.pose,trans_world_to_target_frame)
             drone_state_in_target_frame.pose.header.frame_id = target_frame
-
 
             drone_state_in_target_frame.twist.twist.linear = tf2_geometry_msgs.do_transform_vector3(drone_state_original.twist.twist.linear,trans_world_to_target_frame)
             drone_state_in_target_frame.twist.twist.angular = tf2_geometry_msgs.do_transform_vector3(drone_state_original.twist.twist.angular,trans_world_to_target_frame)
             drone_state_in_target_frame.twist.header.frame_id = target_frame
-            rospy.loginfo('Transformation OK')
-            
-
 
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
-            rospy.logwarn('Transformation from vicon frame to drone frame threw an error')
+            rospy.logwarn('transformation from vicon model frame to drone frame threw an error')
             rate.sleep()
             continue
 

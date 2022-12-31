@@ -71,7 +71,7 @@
 
 	<include file="$(find moving_platform_description)/launch/moving_platform_without_env.launch">
 	  <arg name = "drone_name" value = "$(arg drone_name)" />
-	  <arg name = "trajectory_type" value = "rectiliar_periodic_straight" />
+	  <arg name = "trajectory_type" value = "rectilinear_periodic_straight" />
 	  <arg name = "trajectory_speed" value = "1.6" />
 	  <arg name = "trajectory_frequency" value = "100" />
 	  <arg name = "trajectory_radius" value = "2"/>
@@ -86,9 +86,5 @@
 	  <arg name = "trajectory_radius_vertical" value = "0.5"/>
 	  <arg name = "trajectory_speed_lateral" value = "0.0" />
 	  <arg name = "trajectory_radius_lateral" value = "2"/>
-
-	
 	</include> 
-	
-
 </launch>

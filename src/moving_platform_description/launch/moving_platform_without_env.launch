@@ -46,10 +46,7 @@
 
 <!-- Launch transform publisher that publishes the commanded pose data to the moving platform -->
   <node name="moving_platform_world_base_link_transform_publisher_node" pkg="moving_platform_description" type="world_base_link_transform_publisher.py" output="screen" /> 
-
-
-
-  <node name="command_moving_platform_trajectories_node" pkg="moving_platform_description" type="command_moving_platform_trajectories.py" output="screen" respawn="true">
+  <node name="command_moving_platform_trajectories_node" pkg="moving_platform_description" type="command_moving_platform_trajectories.py" output="screen" respawn="false">
     <param name = "drone_name" value = "$(arg drone_name)" />
     <param name = "trajectory_type" value = "$(arg trajectory_type)" />
     <param name = "trajectory_speed" value = "$(arg trajectory_speed)" />
@@ -67,7 +64,4 @@
     <param name = "trajectory_speed_lateral" value = "$(arg trajectory_speed_lateral)" />
     <param name = "trajectory_radius_lateral" value = "$(arg trajectory_radius_lateral)"/>
   </node> 
-
-
-
   </launch>

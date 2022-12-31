@@ -1,64 +1,36 @@
 <?xml version="1.0"?>
 <robot name = "moving_platform">
 
-  <material name="blue">
-    <color rgba= "0 0 1 1"/>
-  </material>
   <material name="green">
     <color rgba= "0 1 0 1"/>
-  </material>
+  </material> 
   
-
-  <!-- ... -->
-
+  <!-- Create world link -->
   <link name="world_link"/>
   
-  <link name="moving_platform/bumper_link">
-  <origin xyz="0 0 0" rpy="0 0 0" />
-     <visual>
-       <geometry>
-         <box size="0.5 0.5 0.01" />
-       </geometry>     
-    </visual>
-    <collision name="bump_sensor_collision">
-       <origin xyz="0 0 0" rpy="0 0 0"/>
-       <geometry>
-         <box size="1.2 1.2 0.01" />
-       </geometry>  
-    </collision>
-  </link>
-  
-<gazebo reference="moving_platform/bumper_link">
-   <material>Gazebo/Green</material>
-</gazebo>
-  
- <joint name="joint_base_link_bumper_link" type="fixed">
-    <parent link="world_link"/>
-    <child link="moving_platform/bumper_link"/>
-    <origin xyz="0 0 0.305" rpy="0 0 0" />
- </joint>
-  
+  <!-- Create moving platform -->
   <link name="moving_platform/base_link">
     <origin xyz="0 0 0" rpy="0 0 0" />
      <visual>
        <geometry>
-         <box size="1 1 0.3" />
+         <box size="1 1 0.29" />
        </geometry>
     </visual>
-    
     <inertial>
          <mass value="10"/>
-      <!--   <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/> -->
-      <inertia ixx="10" ixy="0" ixz="0" iyy="10" iyz="0" izz="10"/>
+      <inertia ixx="0.9083" ixy="0" ixz="0" iyy="0.9083" iyz="0" izz="1.66666"/>
     </inertial>
     <collision>
        <origin xyz="0 0 0" rpy="0 0 0"/>
        <geometry>
-         <box size="1 1 0.3" />
+         <box size="1 1 0.29" />
        </geometry>
     </collision>
   </link>
   
+  <gazebo reference="moving_platform/base_link">
+   <material>Gazebo/White</material>
+  </gazebo>
 
   <joint name="joint_world_base_link" type="fixed">
     <parent link="world_link"/>
@@ -66,82 +38,56 @@
     <origin xyz="0 0 0.15" rpy="0 0 0" />
   </joint>
 
-
-  <!--IMU : joint , link , sensor  -->
-  <joint name="moving_platform/IMU_joint" type="fixed">
-    <axis xyz="1 0 0"/>      
-    <origin xyz="0 0 0"/>
-    <parent link="moving_platform/base_link"/>
-    <child link="moving_platform/IMU_link"/>
-  </joint>
-
-  <link name="moving_platform/IMU_link">
-   <inertial>
-    <mass value="0.001"/>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001"/>
-   </inertial>
-   <visual>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <geometry>
-      <box size="0.01 0.01 0.01"/>
-    </geometry>
-
-   </visual>
-    <collision>
-     <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-       <box size=".01 .01 .01"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <!-- <gazebo reference="moving_platform/IMU_link">
-    <gravity>true</gravity>
-    <sensor name="imu_sensor" type="imu">
-      <always_on>true</always_on>
-      <update_rate>100</update_rate>
-      <visualize>true</visualize>
-      <topic>__default_topic__</topic>
-      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
-        <topicName>/moving_platform/imu</topicName>
-        <bodyName>IMU_link</bodyName>
-        <updateRateHZ>30.0</updateRateHZ>
-        <gaussianNoise>0.0</gaussianNoise>
-        <xyzOffset>0 0 0</xyzOffset>
-        <rpyOffset>0 0 0</rpyOffset>
-        <frameName>moving_platform/IMU_link</frameName>
-        <initialOrientationAsReference>false</initialOrientationAsReference>
-      </plugin>
-      <pose>0 0 0 0 0 0</pose>
-    </sensor>
-  </gazebo> -->
-  
-<gazebo reference="moving_platform/bumper_link">
-  <sensor name="main_bumper" type="contact">
-    <selfCollide>true</selfCollide>
-    <alwaysOn>true</alwaysOn>
-    <updateRate>100.0</updateRate>
-    <material>Gazebo/Red</material>
-    <topic>__default_topic__</topic>
-    <contact>
-       <collision>world_link_fixed_joint_lump__bump_sensor_collision_collision</collision>
-    </contact>
-    <plugin name="gazebo_ros_bumper_controller" filename="libgazebo_ros_bumper.so">   
-        <bumperTopicName>moving_platform/contact</bumperTopicName>
-        <frameName>moving_platform/bumper_link</frameName>
-        <alwaysOn>true</alwaysOn>
-        <updateRate>100.0</updateRate>
-    </plugin>
-
-</sensor>
-</gazebo>
-
-
-
   <gazebo>
   <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
     <robotNamespace>/moving_platform</robotNamespace>
   </plugin>
 </gazebo>
+
+
+  <!-- Create bumper to detect touchdown -->
+ <joint name="joint_base_link_bumper_link" type="fixed">
+    <parent link="moving_platform/base_link"/>
+    <child link="moving_platform/bumper_link"/>
+    <origin xyz="0 0 0.15" rpy="0 0 0" />
+ </joint>
+
+  <link name="moving_platform/bumper_link">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+     <visual>
+       <geometry>
+         <box size="1 1 0.01" />
+       </geometry>
+    </visual>
+    <collision>
+       <origin xyz="0 0 0" rpy="0 0 0"/>
+       <geometry>
+         <box size="1 1 0.01" />
+       </geometry>
+    </collision>
+  </link>
+
+<gazebo reference="moving_platform/bumper_link">
+   <material>Gazebo/Green</material>
+</gazebo>
+
+ <gazebo reference="moving_platform/bumper_link">
+  <sensor name="main_bumper" type="contact">
+  <selfCollide>true</selfCollide>
+  <alwaysOn>true</alwaysOn>
+  <updateRate>100.0</updateRate>
+  <material>Gazebo/Red</material>
+  <topic>__default_topic__</topic>
+  <contact>
+      <collision>world_link_fixed_joint_lump__moving_platform/bumper_link_collision_1</collision>
+  </contact>
+  <plugin name="gazebo_ros_bumper_controller" filename="libgazebo_ros_bumper.so">   
+      <bumperTopicName>moving_platform/contact</bumperTopicName>
+      <frameName>moving_platform/bumper_link</frameName>
+      <alwaysOn>true</alwaysOn>
+      <updateRate>100.0</updateRate>
+  </plugin>
+  </sensor>
+</gazebo>
+
 </robot>
