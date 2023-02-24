@@ -36,9 +36,31 @@ class UAVPoseFromStateEstimate():
         self.uav_twist_publisher = rospy.Publisher(uav_twist_topic[0],uav_twist_topic[1],queue_size=0)
         return
 
+    def extract_pose_twist_from_state_estimate(self):
+        self.uav_pose.header.frame_id = "world"
+        self.uav_pose.header.stamp = rospy.Time.now()
+        self.uav_pose.pose.position.x = self.state_estimate.position.x
+        self.uav_pose.pose.position.y = self.state_estimate.position.y
+        self.uav_pose.pose.position.z = self.state_estimate.position.z
+        self.uav_pose.pose.orientation.x = self.state_estimate.orientation.x
+        self.uav_pose.pose.orientation.y = self.state_estimate.orientation.y
+        self.uav_pose.pose.orientation.z = self.state_estimate.orientation.z
+        self.uav_pose.pose.orientation.w = self.state_estimate.orientation.w
+
+        self.uav_twist.header.frame_id = "world"
+        self.uav_twist.header.stamp = rospy.Time.now()
+        self.uav_twist.twist.linear.x = self.state_estimate.velocity.x
+        self.uav_twist.twist.linear.y = self.state_estimate.velocity.y
+        self.uav_twist.twist.linear.z = self.state_estimate.velocity.z
+        self.uav_twist.twist.angular.x = self.state_estimate.angVelocity.x
+        self.uav_twist.twist.angular.y = self.state_estimate.angVelocity.y
+        self.uav_twist.twist.angular.z = self.state_estimate.angVelocity.z
+        return
+
     def read_state_estimate(self,msg):
         """Function processes the msgs received on the topic"""
         self.state_estimate = deepcopy(msg)
+        self.extract_pose_twist_from_state_estimate()
         self.uav_pose_publisher.publish(self.uav_pose)
         self.uav_twist_publisher.publish(self.uav_twist)
         return

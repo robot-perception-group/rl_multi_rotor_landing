@@ -16,7 +16,7 @@ r_mp = 2 #[m]
 l_mp = 1 #[m]
 
 #Define parameters of fly zone
-x_max = 4.5 #[m]
+x_max = 1 #[m]
 
 #Define parameters of reward function
 w_p = -100 #[-]
@@ -87,6 +87,7 @@ print("v_mp =",v_mp,"m/s")
 print("r_mp =",r_mp,"m")
 print("a_mpmax =",a_mpmax,"m/s^2")
 print("omega_mp =",omega_mp,"rad/s")
+print("f_mp =",f_mp,"hz")
 print("n_cs =",n_cs)
 
 

@@ -14,6 +14,7 @@ gaz_port = sys.argv[2]
 exp_id = sys.argv[3]
 sim_id = sys.argv[4]
 path_to_exp = sys.argv[5]
+path_to_log_used_files = sys.argv[6]
 
 eval_time = 4500       #[s]
 kill_screen_break_time = 5 #[s]
@@ -84,6 +85,7 @@ parameters_path = os.path.join(os.getenv("ROS_PROJECT_ROOT"),"src","training_q_l
 src_path = get_last_parameters_file(exp_id,sim_id)
 shutil.copyfile(src_path,parameters_path)
 
+
 #Perform update of parameters on the parameters file
 last_final_results_path = get_last_final_result_path()
 replace_line_in_textfile_that_contains(parameters_path,"self.load_data_from","        self.load_data_from = '"+last_final_results_path+"'")
@@ -95,15 +97,30 @@ replace_text_in_file(parameters_path,'self.t_max: float = 20 #[s]','self.t_max: 
 replace_text_in_file(parameters_path,"self.init_distribution: str = 'normal'","self.init_distribution: str = 'uniform'")
 #Update init altitude
 replace_text_in_file(parameters_path,"self.init_altitude: float = 4","self.init_altitude: float = 2.5")
+replace_line_in_textfile_that_contains(parameters_path,"        self.minimum_altitude:","        self.minimum_altitude: float = 0.1 #[m]")
 #Update terminal failure for reaching goal state
 replace_text_in_file(parameters_path,'"success" : True','"success" : False')
-replace_text_in_file(parameters_path,'"max_num_timesteps" : True','"max_num_timesteps" : False')
+# replace_text_in_file(parameters_path,'"max_num_timesteps" : True','"max_num_timesteps" : False')
+replace_text_in_file(parameters_path,'self.init_max_y: np.array = np.array([0,0])','self.init_max_y: np.array = np.array([0,4.5])')
+replace_text_in_file(parameters_path,'self.init_min_y: np.array = np.array([0,0])','self.init_min_y: np.array = np.array([-4.5,0])')
+
+
 
 #Perform the evaluation for the different scenarios
 analysis_path = os.path.join(os.getenv("ROS_PROJECT_ROOT"),"src","training_q_learning","scripts","analysis_node_2D.py")
 
 #Rectilinear periodic movement with different velocities
 for vmp_x in [0,0.4,0.8,1.2,1.6]:
+    #Copy the files used for the evaluation to the assigned logging directory
+    file_name_components = [exp_id,sim_id,"vmpexp_x",str(vmp_x),"vmpexp_y","0","rmp"]
+    test_results_file_name = "_".join(file_name_components).replace(".","_")
+    dest_path = os.path.join(path_to_log_used_files,exp_id,"used_files_"+test_results_file_name)
+    os.makedirs(dest_path, exist_ok=True)
+    landing_simulation_launchfile_path = os.path.join(os.getenv("ROS_PROJECT_ROOT"),"src","training_q_learning","launch","landing_simulation.launch")
+    compute_observation_launchfile_path = os.path.join(os.getenv("ROS_PROJECT_ROOT"),"src","training_q_learning","launch","compute_observation.launch")
+    shutil.copy(parameters_path, os.path.join(dest_path,"parameters.py"))
+    shutil.copy(landing_simulation_launchfile_path, os.path.join(dest_path,"landing_simulation.launch"))
+    shutil.copy(compute_observation_launchfile_path, os.path.join(dest_path,"compute_observation.launch"))
     vmp_y = 0
     #Lateral velocity
     #Kill the terminal screen containing the publisher to the topic

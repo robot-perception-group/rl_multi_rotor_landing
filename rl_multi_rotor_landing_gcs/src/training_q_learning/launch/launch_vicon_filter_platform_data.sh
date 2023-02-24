@@ -8,5 +8,6 @@ export ROS_IP=192.168.7.4
 echo "ROS_IP: $ROS_IP"
 echo $ROS_MASTER_URI
 
+
 source ~/src/rl_multi_rotor_landing/rl_multi_rotor_landing_gcs/other_files/setup.bash
-roslaunch training_q_learning vicon_action_to_uavpose.launch drone_name:=$DRONE_NAME 
+roslaunch training_q_learning vicon_filter_platform_data.launch 

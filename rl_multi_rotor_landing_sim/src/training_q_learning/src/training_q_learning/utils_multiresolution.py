@@ -169,15 +169,15 @@ def get_discrete_rel_states_from_ros_msg(msg:ObservationRelativeState,lims_of_cu
         #If the latest valid curriculum step is not the latest curriculum step in the curriculum sequence
         if latest_valid_cur_step < len(lims_of_cur_steps[msg_string])-1:
             if "rel_p_" in msg_string:
-                #ratio = beta = sigma^2, if lims_of_cur_steps is generated correctly
+                #ratio = sigma^2, if lims_of_cur_steps is generated correctly
                 ratio = lims_of_cur_steps[msg_string][latest_valid_cur_step + 1][1] / lims_of_cur_steps[msg_string][latest_valid_cur_step][1] 
 
             elif "rel_v_" in msg_string:
-                #ratio = beta = sigma, if lims_of_cur_steps is generated correctly
+                #ratio = sigma, if lims_of_cur_steps is generated correctly
                 ratio = lims_of_cur_steps[msg_string][latest_valid_cur_step + 1][1] / lims_of_cur_steps[msg_string][latest_valid_cur_step][1] 
 
             elif "rel_a_" in msg_string:
-                #ratio = beta = sigma_a
+                #ratio = sigma_a
                 ratio = parameters.rl_parameters.sigma_a
  
         #If the latest valid curriculum step is the latest curriculum step in the curriculum sequence

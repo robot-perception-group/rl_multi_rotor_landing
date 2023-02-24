@@ -9,9 +9,9 @@ import csv
 
 ## Input 
 #Parameters
-bag_name = 'stmoving_good_parameters_slow_20220824_204346.bag'
+bag_name = 'vmp_0_4_term_alt_0_4_try_12_20230214_174800.bag'
 file_base_path = 'rosbag_converts'
-min_fly_zone_height = 1
+min_fly_zone_height = 0.1
 min_armed_len = 5 #[s]
 min_flight_time = 5 #[s]
 
@@ -55,17 +55,64 @@ for i in range(len(ROSControlled_data)):
         current_start = 0.0
         current_stop = 0.0
 print("Detected "+str(len(period_list))+" periods with length > " + str(min_armed_len)+"s in which ROS mode was activated.")
+print(period_list)
+# #Analyze when the state estimate p_z is below min boundary of fly box for the first time.
+# file_path_se = os.path.join(os.path.dirname(os.path.realpath(__file__)),file_base_path,bag_name[:-4],'Total',id_name+"_state_estimate_pos_vel"+'.dat')
+# se_p_z_data = np.genfromtxt(file_path_se,delimiter=',')
+# for i in range(len(period_list)):
+#     for k in range(len(se_p_z_data)):
+#         if se_p_z_data[k][2] < min_fly_zone_height and se_p_z_data[k][0] < period_list[0][1]:
+#             #Overwrite period end with new end point
+#             period_list[i][1] = se_p_z_data[k][0]
+#             break
+# print("Corrected the end point based on when the fly box was left for the first time.")
 
-#Analyze when the state estimate p_z is below min boundary of fly box for the first time.
-file_path_se = os.path.join(os.path.dirname(os.path.realpath(__file__)),file_base_path,bag_name[:-4],'Total',id_name+"_state_estimate_pos_vel"+'.dat')
-se_p_z_data = np.genfromtxt(file_path_se,delimiter=',')
+
+#Analyze when the altitude of the drone determined by the vicon system is below min boundary of fly box for the first time.
+print("Begin correction of end time of one flight based on when the min altitude (determined by Vicon) was reached for the first time and not on the ROS mode.")
+file_path_va = os.path.join(os.path.dirname(os.path.realpath(__file__)),file_base_path,bag_name[:-4],'Total',id_name+"_drone_pose_enu"+'.dat')
+va_p_z_data = np.genfromtxt(file_path_va,delimiter=',')
 for i in range(len(period_list)):
-    for k in range(len(se_p_z_data)):
-        if se_p_z_data[k][2] < min_fly_zone_height and se_p_z_data[k][0] < period_list[0][1]:
+    for k in range(len(va_p_z_data)):
+        if va_p_z_data[k][3] < min_fly_zone_height and va_p_z_data[k][0] > period_list[i][0] and va_p_z_data[k][0] < period_list[i][1]:
+            print("Corrected end time of flight",i)
             #Overwrite period end with new end point
-            period_list[i][1] = se_p_z_data[k][0]
+            period_list[i][1] = va_p_z_data[k][0]
             break
-print("Corrected the end point based on when the fly box was left for the first time.")
+
+#Extract flights for drone pose enu
+print("Start extracting flights for drone pose enu...")
+file_path_drone_pose_enu = os.path.join(os.path.dirname(os.path.realpath(__file__)),file_base_path,bag_name[:-4],'Total',id_name+"_drone_pose_enu"+'.dat')
+drone_pose_data = np.genfromtxt(file_path_drone_pose_enu,delimiter=',')
+
+#Iterate through periods
+for i in range(len(period_list)):
+    if min_flight_time > period_list[i][1]-period_list[i][0]:
+        continue
+
+    #Create directory
+    Path(os.path.join(os.path.dirname(os.path.realpath(__file__)),file_base_path,bag_name[:-4],"Flights","flight_"+str(i))).mkdir(parents=True, exist_ok=True)
+
+    #Create file
+    file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),file_base_path,bag_name[:-4],'Flights',"flight_"+str(i),id_name+"_drone_pose_enu"+'.dat')
+    open(file_path,'w+').close()
+
+    #Fill with data
+    row_list = []
+    for k in range(len(drone_pose_data)):
+        if (drone_pose_data[k][0] >= period_list[i][0] and drone_pose_data[k][0] <= period_list[i][1]):
+            row_list = drone_pose_data[k]
+
+            #Time shift to begin at t = 0s
+            row_list[0] = row_list[0] - period_list[i][0]
+
+            #Write data
+            with open(file_path,'a+') as f:
+                writer = csv.writer(f)
+                writer.writerow(row_list)
+print("Done extracting flights for drone pose enu...")
+
+
 
 #Extract flights for  mp pose
 print("Start extracting flights for mp pose...")

@@ -14,7 +14,7 @@ def get_publisher(topic_path:str, msg_type, **kwargs):
     for i in range(10):
         num_cons = pub.get_num_connections()
         if num_cons == num_subs:
-            print("Got publisher",topic_path,"with ROS_MASTER_URI =",os.environ["ROS_MASTER_URI"],",GAZEBO_MASTER_URI =",os.environ["GAZEBO_MASTER_URI"],",ROS_IP =",os.environ["ROS_IP"])
+            print("Got publisher",topic_path,"with ROS_MASTER_URI =",os.environ["ROS_MASTER_URI"],",ROS_IP =",os.environ["ROS_IP"])
             return pub
         time.sleep(0.1)
     raise RuntimeError("Failed to get publisher ",topic_path)

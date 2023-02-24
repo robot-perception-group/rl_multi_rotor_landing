@@ -7,7 +7,6 @@
     <Details>Default configuration built to work on all screen sizes</Details>
     <ExpertMode>true</ExpertMode>
     <LastUsageHash></LastUsageHash>
-    <OverrideLanguage>en_US</OverrideLanguage>
     <SaveSettingsOnExit>true</SaveSettingsOnExit>
     <ShowUsageDataDisclaimer>false</ShowUsageDataDisclaimer>
     <StyleSheet>default</StyleSheet>
@@ -37,7 +36,7 @@
         <version>0.0.0</version>
       </configInfo>
       <data>
-        <HostName>10.42.0.105</HostName>
+        <HostName>192.168.7.3</HostName>
         <Port>9000</Port>
         <UseTCP>1</UseTCP>
       </data>
@@ -94,12 +93,92 @@
             <Value1>Armed</Value1>
             <Value2>0</Value2>
           </arr_1>
-          <size>1</size>
+          <arr_2>
+            <CurrentLanguage>default</CurrentLanguage>
+            <DataObject>FlightStatus</DataObject>
+            <ExpireTimeout>15</ExpireTimeout>
+            <Mute>false</Mute>
+            <ObjectField>Armed</ObjectField>
+            <RangeLimit>0</RangeLimit>
+            <Repeat>0</Repeat>
+            <SayOrder>0</SayOrder>
+            <Sound1>armed</Sound1>
+            <Sound2></Sound2>
+            <Sound3></Sound3>
+            <SoundCollectionPath>%%DATAPATH%%sounds</SoundCollectionPath>
+            <Value1>Armed</Value1>
+            <Value2>0</Value2>
+          </arr_2>
+          <arr_3>
+            <CurrentLanguage>default</CurrentLanguage>
+            <DataObject>FlightStatus</DataObject>
+            <ExpireTimeout>15</ExpireTimeout>
+            <Mute>false</Mute>
+            <ObjectField>Armed</ObjectField>
+            <RangeLimit>0</RangeLimit>
+            <Repeat>0</Repeat>
+            <SayOrder>0</SayOrder>
+            <Sound1>armed</Sound1>
+            <Sound2></Sound2>
+            <Sound3></Sound3>
+            <SoundCollectionPath>%%DATAPATH%%sounds</SoundCollectionPath>
+            <Value1>Armed</Value1>
+            <Value2>0</Value2>
+          </arr_3>
+          <arr_4>
+            <CurrentLanguage>default</CurrentLanguage>
+            <DataObject>FlightStatus</DataObject>
+            <ExpireTimeout>15</ExpireTimeout>
+            <Mute>false</Mute>
+            <ObjectField>Armed</ObjectField>
+            <RangeLimit>0</RangeLimit>
+            <Repeat>0</Repeat>
+            <SayOrder>0</SayOrder>
+            <Sound1>armed</Sound1>
+            <Sound2></Sound2>
+            <Sound3></Sound3>
+            <SoundCollectionPath>%%DATAPATH%%sounds</SoundCollectionPath>
+            <Value1>Armed</Value1>
+            <Value2>0</Value2>
+          </arr_4>
+          <arr_5>
+            <CurrentLanguage>default</CurrentLanguage>
+            <DataObject>FlightStatus</DataObject>
+            <ExpireTimeout>15</ExpireTimeout>
+            <Mute>false</Mute>
+            <ObjectField>Armed</ObjectField>
+            <RangeLimit>0</RangeLimit>
+            <Repeat>0</Repeat>
+            <SayOrder>0</SayOrder>
+            <Sound1>armed</Sound1>
+            <Sound2></Sound2>
+            <Sound3></Sound3>
+            <SoundCollectionPath>%%DATAPATH%%sounds</SoundCollectionPath>
+            <Value1>Armed</Value1>
+            <Value2>0</Value2>
+          </arr_5>
+          <arr_6>
+            <CurrentLanguage>default</CurrentLanguage>
+            <DataObject>FlightStatus</DataObject>
+            <ExpireTimeout>15</ExpireTimeout>
+            <Mute>false</Mute>
+            <ObjectField>Armed</ObjectField>
+            <RangeLimit>0</RangeLimit>
+            <Repeat>0</Repeat>
+            <SayOrder>0</SayOrder>
+            <Sound1>armed</Sound1>
+            <Sound2></Sound2>
+            <Sound3></Sound3>
+            <SoundCollectionPath>%%DATAPATH%%sounds</SoundCollectionPath>
+            <Value1>Armed</Value1>
+            <Value2>0</Value2>
+          </arr_6>
+          <size>6</size>
         </listNotifies>
       </data>
     </SoundNotifyPlugin>
   </Plugins>
-  <SelectedWorkspace>2</SelectedWorkspace>
+  <SelectedWorkspace>1</SelectedWorkspace>
   <UAVGadgetConfigurations>
     <DialGadget>
       <Attitude>
@@ -1624,12 +1703,12 @@
         <data>
           <accessMode>ServerAndCache</accessMode>
           <cacheLocation>%%STOREPATH%%mapscache/</cacheLocation>
-          <defaultLatitude>0</defaultLatitude>
-          <defaultLongitude>0</defaultLongitude>
+          <defaultLatitude>48.74976240245888</defaultLatitude>
+          <defaultLongitude>9.105679839849472</defaultLongitude>
           <defaultWaypointAltitude>15</defaultWaypointAltitude>
           <defaultWaypointVelocity>2</defaultWaypointVelocity>
-          <defaultZoom>2</defaultZoom>
-          <mapProvider>GoogleHybrid</mapProvider>
+          <defaultZoom>22</defaultZoom>
+          <mapProvider>OpenStreetMap</mapProvider>
           <maxUpdateRate>2000</maxUpdateRate>
           <overlayOpacity>1</overlayOpacity>
           <safeAreaRadius>5</safeAreaRadius>
@@ -1677,7 +1756,7 @@
           <defaultWaypointAltitude>15</defaultWaypointAltitude>
           <defaultWaypointVelocity>2</defaultWaypointVelocity>
           <defaultZoom>2</defaultZoom>
-          <mapProvider>OpenStreetMap</mapProvider>
+          <mapProvider>GoogleMap</mapProvider>
           <maxUpdateRate>2000</maxUpdateRate>
           <overlayOpacity>1</overlayOpacity>
           <safeAreaRadius>5</safeAreaRadius>
@@ -2383,7 +2462,7 @@
           <LoggingNewFileOnConnect>false</LoggingNewFileOnConnect>
           <LoggingPath></LoggingPath>
           <configurationStreamVersion>1000</configurationStreamVersion>
-          <dataSize>60</dataSize>
+          <dataSize>30</dataSize>
           <plotCurve0>
             <color>4278233600</color>
             <drawAntialiased>true</drawAntialiased>
@@ -2441,7 +2520,7 @@
           </plotCurve4>
           <plotCurveCount>5</plotCurveCount>
           <plotType>1</plotType>
-          <refreshInterval>500</refreshInterval>
+          <refreshInterval>100</refreshInterval>
         </data>
       </Magnetometer>
       <OPLink>
@@ -2919,6 +2998,55 @@
           <refreshInterval>800</refreshInterval>
         </data>
       </Uptimes>
+      <Velocities>
+        <configInfo>
+          <locked>false</locked>
+          <version>0.0.0</version>
+        </configInfo>
+        <data>
+          <LoggingEnabled>false</LoggingEnabled>
+          <LoggingNewFileOnConnect>false</LoggingNewFileOnConnect>
+          <LoggingPath></LoggingPath>
+          <configurationStreamVersion>1000</configurationStreamVersion>
+          <dataSize>120</dataSize>
+          <plotCurve0>
+            <color>4294901760</color>
+            <drawAntialiased>true</drawAntialiased>
+            <mathFunction>None</mathFunction>
+            <uavField>North</uavField>
+            <uavObject>VelocityState</uavObject>
+            <yMaximum>0</yMaximum>
+            <yMeanSamples>1</yMeanSamples>
+            <yMinimum>0</yMinimum>
+            <yScalePower>0</yScalePower>
+          </plotCurve0>
+          <plotCurve1>
+            <color>4283782655</color>
+            <drawAntialiased>true</drawAntialiased>
+            <mathFunction>None</mathFunction>
+            <uavField>East</uavField>
+            <uavObject>VelocityState</uavObject>
+            <yMaximum>0</yMaximum>
+            <yMeanSamples>1</yMeanSamples>
+            <yMinimum>0</yMinimum>
+            <yScalePower>0</yScalePower>
+          </plotCurve1>
+          <plotCurve2>
+            <color>4283804160</color>
+            <drawAntialiased>true</drawAntialiased>
+            <mathFunction>None</mathFunction>
+            <uavField>Down</uavField>
+            <uavObject>VelocityState</uavObject>
+            <yMaximum>0</yMaximum>
+            <yMeanSamples>1</yMeanSamples>
+            <yMinimum>0</yMinimum>
+            <yScalePower>0</yScalePower>
+          </plotCurve2>
+          <plotCurveCount>3</plotCurveCount>
+          <plotType>1</plotType>
+          <refreshInterval>200</refreshInterval>
+        </data>
+      </Velocities>
     </ScopeGadget>
     <SystemHealthGadget>
       <default>
@@ -2939,12 +3067,12 @@
         </configInfo>
         <data>
           <CategorizedView>true</CategorizedView>
-          <ScientificView>true</ScientificView>
+          <ScientificView>false</ScientificView>
           <manuallyChangedColor>#5baa56</manuallyChangedColor>
           <onlyHilightChangedValues>false</onlyHilightChangedValues>
           <recentlyUpdatedColor>#ff7957</recentlyUpdatedColor>
           <recentlyUpdatedTimeout>300</recentlyUpdatedTimeout>
-          <showDescription>true</showDescription>
+          <showDescription>false</showDescription>
           <showMetaData>true</showMetaData>
           <splitterState>@ByteArray()</splitterState>
           <unknownObjectColor>#a0a0a4</unknownObjectColor>
@@ -2998,11 +3126,26 @@
           <type>splitter</type>
         </side0>
         <side1>
-          <classId>OPMapGadget</classId>
-          <gadget>
-            <activeConfiguration>default</activeConfiguration>
-          </gadget>
-          <type>uavGadget</type>
+          <side0>
+            <classId>OPMapGadget</classId>
+            <gadget>
+              <activeConfiguration>Google Sat</activeConfiguration>
+            </gadget>
+            <type>uavGadget</type>
+          </side0>
+          <side1>
+            <classId>ScopeGadget</classId>
+            <gadget>
+              <activeConfiguration>Velocities</activeConfiguration>
+              <state>
+                <legendVisible>true</legendVisible>
+              </state>
+            </gadget>
+            <type>uavGadget</type>
+          </side1>
+          <splitterOrientation>2</splitterOrientation>
+          <splitterSizes>@Variant(AAAACQAAAAA=)</splitterSizes>
+          <type>splitter</type>
         </side1>
         <splitterOrientation>1</splitterOrientation>
         <splitterSizes>@Variant(AAAACQAAAAIAAAACAAADXwAAAAIAAAQc)</splitterSizes>
@@ -3016,7 +3159,7 @@
         <classId>ConfigGadget</classId>
         <gadget>
           <state>
-            <currentIndex>2</currentIndex>
+            <currentIndex>4</currentIndex>
           </state>
         </gadget>
         <type>uavGadget</type>
@@ -3031,7 +3174,7 @@
           <gadget>
             <activeConfiguration>default</activeConfiguration>
             <state>
-              <expandedItems>@Variant(AAAACwAAAAUAAABgAFMAZQB0AHQAaQBuAGcAcwAvAFMAeQBzAHQAZQBtAC8AUgBPAFMAQgByAGkAZABnAGUAUwBlAHQAdABpAG4AZwBzAC8ARwBlAG8ARgBlAG4AYwBlAEIAbwB4AE0AaQBuAAAAEABTAGUAdAB0AGkAbgBnAHMAAABCAFMAZQB0AHQAaQBuAGcAcwAvAFMAeQBzAHQAZQBtAC8AUgBPAFMAQgByAGkAZABnAGUAUwBlAHQAdABpAG4AZwBzAAAAHgBTAGUAdAB0AGkAbgBnAHMALwBTAHkAcwB0AGUAbQAAAGAAUwBlAHQAdABpAG4AZwBzAC8AUwB5AHMAdABlAG0ALwBSAE8AUwBCAHIAaQBkAGcAZQBTAGUAdAB0AGkAbgBnAHMALwBHAGUAbwBGAGUAbgBjAGUAQgBvAHgATQBhAHg=)</expandedItems>
+              <expandedItems>@Variant(AAAACwAAAA8AAABAAEQAYQB0AGEAIABPAGIAagBlAGMAdABzAC8AUwB0AGEAdABlAC8AUABvAHMAaQB0AGkAbwBuAFMAdABhAHQAZQAAAGAAUwBlAHQAdABpAG4AZwBzAC8AUwB5AHMAdABlAG0ALwBSAE8AUwBCAHIAaQBkAGcAZQBTAGUAdAB0AGkAbgBnAHMALwBHAGUAbwBGAGUAbgBjAGUAQgBvAHgATQBpAG4AAABKAEQAYQB0AGEAIABPAGIAagBlAGMAdABzAC8AUwB0AGEAdABlAC8ATQBhAGcAUwB0AGEAdABlAC8ATQBlAHQAYQAgAEQAYQB0AGEAAABAAFMAZQB0AHQAaQBuAGcAcwAvAFMAZQBuAHMAbwByAHMALwBSAGUAdgBvAEMAYQBsAGkAYgByAGEAdABpAG8AbgAAAGAARABhAHQAYQAgAE8AYgBqAGUAYwB0AHMALwBTAHQAYQB0AGUALwBQAG8AcwBpAHQAaQBvAG4AUwB0AGEAdABlAC8ATQBlAHQAYQAgAEQAYQB0AGEALwBNAG8AZABlAHMAAABUAEQAYQB0AGEAIABPAGIAagBlAGMAdABzAC8AUwB0AGEAdABlAC8AVgBlAGwAbwBjAGkAdAB5AFMAdABhAHQAZQAvAE0AZQB0AGEAIABEAGEAdABhAAAAHgBTAGUAdAB0AGkAbgBnAHMALwBTAHkAcwB0AGUAbQAAACQARABhAHQAYQAgAE8AYgBqAGUAYwB0AHMALwBTAHQAYQB0AGUAAABAAFMAZQB0AHQAaQBuAGcAcwAvAE4AYQB2AGkAZwBhAHQAaQBvAG4ALwBIAG8AbQBlAEwAbwBjAGEAdABpAG8AbgAAABgARABhAHQAYQAgAE8AYgBqAGUAYwB0AHMAAABgAFMAZQB0AHQAaQBuAGcAcwAvAFMAeQBzAHQAZQBtAC8AUgBPAFMAQgByAGkAZABnAGUAUwBlAHQAdABpAG4AZwBzAC8ARwBlAG8ARgBlAG4AYwBlAEIAbwB4AE0AYQB4AAAAQgBTAGUAdAB0AGkAbgBnAHMALwBTAHkAcwB0AGUAbQAvAFIATwBTAEIAcgBpAGQAZwBlAFMAZQB0AHQAaQBuAGcAcwAAAEYAUwBlAHQAdABpAG4AZwBzAC8ATgBhAHYAaQBnAGEAdABpAG8AbgAvAEgAbwBtAGUATABvAGMAYQB0AGkAbwBuAC8AQgBlAAAANgBEAGEAdABhACAATwBiAGoAZQBjAHQAcwAvAFMAdABhAHQAZQAvAE0AYQBnAFMAdABhAHQAZQAAAGAARABhAHQAYQAgAE8AYgBqAGUAYwB0AHMALwBTAHQAYQB0AGUALwBWAGUAbABvAGMAaQB0AHkAUwB0AGEAdABlAC8ATQBlAHQAYQAgAEQAYQB0AGEALwBNAG8AZABlAHM=)</expandedItems>
             </state>
           </gadget>
           <type>uavGadget</type>
@@ -3062,34 +3205,18 @@
       <showToolbars>true</showToolbars>
       <splitter>
         <side0>
-          <side0>
-            <classId>ScopeGadget</classId>
-            <gadget>
-              <state>
-                <legendVisible>true</legendVisible>
-              </state>
-            </gadget>
-            <type>uavGadget</type>
-          </side0>
-          <side1>
-            <classId>ScopeGadget</classId>
-            <gadget>
-              <activeConfiguration>Raw GyroState</activeConfiguration>
-              <state>
-                <legendVisible>true</legendVisible>
-              </state>
-            </gadget>
-            <type>uavGadget</type>
-          </side1>
-          <splitterOrientation>2</splitterOrientation>
-          <splitterSizes>@Variant(AAAACQAAAAA=)</splitterSizes>
-          <type>splitter</type>
+          <classId>ScopeGadget</classId>
+          <gadget>
+            <state>
+              <legendVisible>true</legendVisible>
+            </state>
+          </gadget>
+          <type>uavGadget</type>
         </side0>
         <side1>
           <side0>
             <classId>ScopeGadget</classId>
             <gadget>
-              <activeConfiguration>Attitude</activeConfiguration>
               <state>
                 <legendVisible>true</legendVisible>
               </state>
@@ -3099,7 +3226,6 @@
           <side1>
             <classId>ScopeGadget</classId>
             <gadget>
-              <activeConfiguration>Uptimes</activeConfiguration>
               <state>
                 <legendVisible>true</legendVisible>
               </state>
@@ -3117,47 +3243,41 @@
       <version>UAVGadgetManagerV1</version>
     </Mode4>
     <Mode5>
-      <showToolbars>false</showToolbars>
+      <showToolbars>true</showToolbars>
       <splitter>
         <side0>
-          <classId>HITL</classId>
-          <gadget>
-            <activeConfiguration>XPlane9 HITL</activeConfiguration>
-          </gadget>
-          <type>uavGadget</type>
-        </side0>
-        <side1>
           <side0>
-            <side0>
-              <classId>PfdQmlGadget</classId>
-              <gadget>
-                <activeConfiguration>PFD</activeConfiguration>
-                <state>
-                  <modelFile>%%DATAPATH%%models/multi/test_quad/test_quad_x.3ds</modelFile>
-                </state>
-              </gadget>
-              <type>uavGadget</type>
-            </side0>
-            <side1>
-              <classId>MagicWaypointGadget</classId>
-              <type>uavGadget</type>
-            </side1>
-            <splitterOrientation>1</splitterOrientation>
-            <splitterSizes>@Variant(AAAACQAAAAIAAAACAAAB7wAAAAIAAAGU)</splitterSizes>
-            <type>splitter</type>
+            <classId>PfdQmlGadget</classId>
+            <gadget>
+              <activeConfiguration>PFD</activeConfiguration>
+              <state>
+                <modelFile>%%DATAPATH%%models/multi/test_quad/test_quad_x.3ds</modelFile>
+              </state>
+            </gadget>
+            <type>uavGadget</type>
           </side0>
           <side1>
-            <classId>GCSControlGadget</classId>
+            <classId>UAVObjectBrowser</classId>
             <gadget>
-              <activeConfiguration>MS Sidewinder</activeConfiguration>
+              <activeConfiguration>default</activeConfiguration>
+              <state>
+                <expandedItems>@Variant(AAAACwAAAAEAAAAYAEQAYQB0AGEAIABPAGIAagBlAGMAdABz)</expandedItems>
+              </state>
             </gadget>
             <type>uavGadget</type>
           </side1>
-          <splitterOrientation>1</splitterOrientation>
-          <splitterSizes>@Variant(AAAACQAAAAIAAAACAAADhAAAAAIAAAIX)</splitterSizes>
+          <splitterOrientation>2</splitterOrientation>
+          <splitterSizes>@Variant(AAAACQAAAAIAAAACAAAB7wAAAAIAAAGU)</splitterSizes>
           <type>splitter</type>
+        </side0>
+        <side1>
+          <classId>GCSControlGadget</classId>
+          <gadget>
+            <activeConfiguration>MS Sidewinder</activeConfiguration>
+          </gadget>
+          <type>uavGadget</type>
         </side1>
-        <splitterOrientation>2</splitterOrientation>
+        <splitterOrientation>1</splitterOrientation>
         <splitterSizes>@Variant(AAAACQAAAAIAAAACAAADDAAAAAIAAAJJ)</splitterSizes>
         <type>splitter</type>
       </splitter>

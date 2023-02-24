@@ -6,7 +6,7 @@ set xlabel font "Times,15"
 set datafile separator ','
 set terminal qt size 1000,770
 # set nokey
-set key opaque box width 2
+set key left opaque box width 2
 set termoption enhanced
 
 
@@ -19,18 +19,18 @@ set size 1,0.5
 set origin 0, 0.5
 
 #File paths
-file_path_1 = '/home/pgoldschmid/landing_on_moving_platform/other_files/gnuplot/rewards/run-training_results_training_q_learning_1-tag-episode_info_episode_reward_mean.csv'
-file_path_2 = '/home/pgoldschmid/landing_on_moving_platform/other_files/gnuplot/rewards/run-training_results_training_q_learning_2-tag-episode_info_episode_reward_mean.csv'
-file_path_3 = '/home/pgoldschmid/landing_on_moving_platform/other_files/gnuplot/rewards/run-training_results_training_q_learning_3-tag-episode_info_episode_reward_mean.csv'
-file_path_4 = '/home/pgoldschmid/landing_on_moving_platform/other_files/gnuplot/rewards/run-training_results_training_q_learning_4-tag-episode_info_episode_reward_mean.csv'
-file_path_5 = '/home/pgoldschmid/landing_on_moving_platform/other_files/gnuplot/rewards/run-training_results_training_q_learning_5-tag-episode_info_episode_reward_mean.csv'
+file_path_1 = "/home/pgoldschmid/rl_multi_rotor_landing/experiment_evaluation/rewards/vmp_1_6_sim_1_training_results_training_q_learning_1.csv"
+file_path_2 = "/home/pgoldschmid/rl_multi_rotor_landing/experiment_evaluation/rewards/vmp_1_6_sim_1_training_results_training_q_learning_2.csv"
+file_path_3 = "/home/pgoldschmid/rl_multi_rotor_landing/experiment_evaluation/rewards/vmp_1_6_sim_1_training_results_training_q_learning_3.csv"
+file_path_4 = "/home/pgoldschmid/rl_multi_rotor_landing/experiment_evaluation/rewards/vmp_1_6_sim_1_training_results_training_q_learning_4.csv"
+file_path_5 = "/home/pgoldschmid/rl_multi_rotor_landing/experiment_evaluation/rewards/vmp_1_6_sim_1_training_results_training_q_learning_5.csv"
 
 #Variables
-num_eps_1 = 2007
-num_eps_2 = 96
-num_eps_3 = 97
+num_eps_1 = 1726
+num_eps_2 = 97
+num_eps_3 = 96
 num_eps_4 = 96
-num_eps_5 = 97
+num_eps_5 = 98
 
 #Functions
 samples5(x) = $0 > 4 ? 5 : ($0+1)
@@ -58,14 +58,14 @@ set arrow 5 from num_eps_5+num_eps_4+num_eps_3+num_eps_2+num_eps_1,min_reward to
 
 
 #plot
-set xrange[0:3100]
+set xrange[0:2150]
 set yrange [min_reward:max_reward]
-set title "Case sim, agent 5"
+set title "RPM 1.6/1"
 lw_variance = 5
 lw_average = 3
 plot sum = init10(0), \
-     file_path_1 using 2:3 title 'Acc. Rew. per Ep.' w l lw lw_variance+1 lc rgb '#AA32CD32', \
-     '' using 2:(avg10($3)) title 'Mov. Avg. (n=10)'  w l lw lw_average lc rgb '#00000000',\
+     file_path_1 using 2:3 title 'Accumulated Reward per Episode' w l lw lw_variance+1 lc rgb '#AA32CD32', \
+     '' using 2:(avg10($3)) title 'Moving Average (n=10)'  w l lw lw_average lc rgb '#00000000',\
      sum = init10(0), \
      file_path_2 using (column(2)+num_eps_1):3 notitle w l lw lw_variance lc rgb '#AA32CD32', \
      file_path_2 using (column(2)+num_eps_1):(avg10($3)) notitle w l lw lw_average lc rgb "#00000000",\
@@ -82,17 +82,17 @@ plot sum = init10(0), \
 
 
 #File paths
-file_path_new_1 = '/home/pgoldschmid/landing_on_moving_platform/other_files/gnuplot/rewards/run-sim_3_training_results_training_q_learning_1-tag-episode_info_episode_reward.csv'
-file_path_new_2 = '/home/pgoldschmid/landing_on_moving_platform/other_files/gnuplot/rewards/run-sim_3_training_results_training_q_learning_2-tag-episode_info_episode_reward.csv'
-file_path_new_3 = '/home/pgoldschmid/landing_on_moving_platform/other_files/gnuplot/rewards/run-sim_3_training_results_training_q_learning_2-tag-episode_info_episode_reward.csv'
-file_path_new_4 = '/home/pgoldschmid/landing_on_moving_platform/other_files/gnuplot/rewards/run-sim_3_training_results_training_q_learning_4-tag-episode_info_episode_reward.csv'
+file_path_new_1 = '/home/pgoldschmid/rl_multi_rotor_landing/experiment_evaluation/rewards/vmp_0_4_real_sim_3_training_results_training_q_learning_1.csv'
+file_path_new_2 = '/home/pgoldschmid/rl_multi_rotor_landing/experiment_evaluation/rewards/vmp_0_4_real_sim_3_training_results_training_q_learning_2.csv'
+file_path_new_3 = '/home/pgoldschmid/rl_multi_rotor_landing/experiment_evaluation/rewards/vmp_0_4_real_sim_3_training_results_training_q_learning_3.csv'
+file_path_new_4 = '/home/pgoldschmid/rl_multi_rotor_landing/experiment_evaluation/rewards/vmp_0_4_real_sim_3_training_results_training_q_learning_4.csv'
 
 #Variables
 
-num_eps_1 = 2750
-num_eps_2 = 96
+num_eps_1 = 2054
+num_eps_2 = 97
 num_eps_3 = 96
-num_eps_4 = 97
+num_eps_4 = 96
 unset arrow
 
 set size 1,0.5
@@ -104,12 +104,12 @@ set arrow 8 from num_eps_3+num_eps_2+num_eps_1,min_reward to num_eps_3+num_eps_2
 set arrow 9 from num_eps_4+num_eps_3+num_eps_2+num_eps_1,min_reward to num_eps_4+num_eps_3+num_eps_2+num_eps_1,max_reward nohead lw 2lc rgb 'red'
 
 
-set xrange[0:3100]
+set xrange[0:2400]
 set  yrange [min_reward:max_reward]
-set title "Case real, agent 3"
+set title "RPM 0.4/3"
 plot sum = init10(0), \
-     file_path_new_1 using 2:3 title 'Acc. Rew. per Ep.' w l lw lw_variance+1 lc rgb '#AA32CD32',\
-     '' using 2:(avg10($3)) title 'Mov. Avg. (n=10)'  w l lw lw_average lc rgb '#00000000',\
+     file_path_new_1 using 2:3 title 'Accumulated Reward per Episode' w l lw lw_variance+1 lc rgb '#AA32CD32',\
+     '' using 2:(avg10($3)) title 'Moving Average (n=10)'  w l lw lw_average lc rgb '#00000000',\
      sum = init10(0), \
      file_path_new_2 using (column(2)+num_eps_1):3 notitle w l lw lw_variance lc rgb '#AA32CD32', \
      file_path_new_2 using (column(2)+num_eps_1):(avg10($3)) notitle w l lw lw_average lc rgb "#00000000",\

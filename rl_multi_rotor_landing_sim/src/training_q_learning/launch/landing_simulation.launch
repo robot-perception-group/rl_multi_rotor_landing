@@ -62,8 +62,8 @@
 			<arg name="log_file" value="$( arg log_file )"/>
 			<arg name="wait_to_record_bag" value="$( arg wait_to_record_bag )"/>
 			<arg name="verbose" value="$( arg verbose )"/>
-			<arg name="X" value="5.0"/>
-			<arg name="Y" value="0.0"/>
+			<arg name="X" value="0.0"/>
+			<arg name="Y" value="2.0"/>
 			<arg name="Z" value="0.02"/>
 		</include> 
 	</group>

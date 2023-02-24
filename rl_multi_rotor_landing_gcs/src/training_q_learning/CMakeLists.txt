@@ -173,6 +173,9 @@ include_directories(
    scripts/vicon_test_model_2D.py
    scripts/vicon_uav_pose_twist_from_state_estimate.py
    scripts/vicon_publish_state_estimate_copter_frame.py
+   scripts/vicon_filter_platform_data.py
+   scripts/audio_feedback.py
+   scripts/vicon_debug.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 

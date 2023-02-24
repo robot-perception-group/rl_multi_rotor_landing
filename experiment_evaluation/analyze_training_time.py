@@ -7,10 +7,10 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 
 
-sim_ids = ['sim_1','sim_2','sim_3','sim_4','sim_5','sim_6']
+sim_ids = ['sim_1','sim_2','sim_3','sim_4']
 tb_string = 'training_q_learning'
-training_id = 'vmp_1_6'
-experiment_path = '/home/pgoldschmid/Desktop/exp_paper/'
+training_id = 'vmp_0_4_real'
+experiment_path = '/home/pgoldschmid/Desktop/exp_paper_20230109/'
 training_lengths_dict = dict()
 training_nums_of_episodes_dict = dict()
 
@@ -112,4 +112,4 @@ for sim_id in sim_ids:
 print("Total duration: Mean: ",np.rint(np.mean(total_training_time_list)),"| Std.",np.rint(np.std(total_training_time_list)))
 print("Tot. num. of e: Mean: ",np.rint(np.mean(total_num_of_eps_list)),"| Std.",np.rint(np.std(total_num_of_eps_list)))
 
-print("\033[93mCHECK THIS SCRIPT FIRST BEFORE USING IT")
+print("\033[93mThis script was not used to determine the results of the training duration / number of episodes. These were based on the recorded tensorboard log files.")

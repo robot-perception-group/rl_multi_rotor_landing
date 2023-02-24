@@ -207,7 +207,8 @@ def compute_landing_simulation_object_state_msg(landing_simulation_object):
 
 def compute_rpy_std_msg(q):
     msg = Float64MultiArray()
-    msg.data = euler_from_quaternion([q.x,q.y,q.z,q.w])
+    euler = (180/3.141592)*np.array(euler_from_quaternion([q.x,q.y,q.z,q.w]))
+    msg.data = euler
     return msg
 
 
@@ -251,8 +252,16 @@ if __name__ == '__main__':
             drone_state_in_target_frame.twist.twist.angular = tf2_geometry_msgs.do_transform_vector3(drone_state_original.twist.twist.angular,trans_world_to_target_frame)
             drone_state_in_target_frame.twist.header.frame_id = target_frame
 
-        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
-            rospy.logwarn('transformation from vicon model frame to drone frame threw an error')
+        except (tf2_ros.ExtrapolationException):
+            rospy.logwarn('transformation from vicon model frame to drone frame threw an extrapolation error')
+            rate.sleep()
+            continue
+        except (tf2_ros.ConnectivityException):
+            rospy.logwarn('transformation from vicon model frame to drone frame threw a connectivity error')
+            rate.sleep()
+            continue
+        except (tf2_ros.LookupException):
+            rospy.logwarn('transformation from vicon model frame to drone frame threw a lookup error')
             rate.sleep()
             continue
 

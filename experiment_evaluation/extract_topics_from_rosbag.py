@@ -11,8 +11,8 @@ from pathlib import Path
 
 ## Input
 #Parameters
-bag_name = 'stmoving_good_parameters_fast_20220824_205900.bag'
-bag_file_path = '/home/pgoldschmid/Desktop/experiments/real_world/experimente_20220824'
+bag_name = 'vmp_0_4_term_alt_0_4_try_12_20230214_174800.bag'
+bag_file_path = '/home/pgoldschmid/src/rl_multi_rotor_landing/rl_multi_rotor_landing_gcs/other_files'
 file_base_path = 'rosbag_converts'
 skipped_entries_at_start_of_episode = 5
 
@@ -116,6 +116,35 @@ for j in range(skipped_entries_at_start_of_episode,len(t_list)):
         writer.writerow(row_list)
 print("Done extracting moving platform pose in ned...")
 
+
+#Read rosbag file and extract position of drone
+print("Start extracting drone pose in enu...")
+p_x_list =[]
+p_y_list =[]
+p_z_list =[]
+t_list =[]
+bag = rosbag.Bag(os.path.join(bag_file_path,bag_name))
+for topic, msg, t in bag.read_messages(topics=['/vicon/drone/pose_enu']):
+    p_x_list.append(msg.pose.position.x)
+    p_y_list.append(msg.pose.position.y)
+    p_z_list.append(msg.pose.position.z)
+    t_list.append(t.to_sec())
+
+#Make dir and initialize file
+Path(os.path.join(os.path.dirname(os.path.realpath(__file__)),file_base_path,bag_name[:-4])).mkdir(parents=True, exist_ok=True)
+file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),file_base_path,bag_name[:-4],'Total',id_name+"_drone_pose_enu"+'.dat')
+row_list = []
+open(file_path,'w+').close()
+
+#Fill with data
+row_list = []
+for j in range(skipped_entries_at_start_of_episode,len(t_list)):
+    row_list = [t_list[j],p_x_list[j],p_y_list[j],p_z_list[j]]
+    with open(file_path,'a+') as f:
+        writer = csv.writer(f)
+        writer.writerow(row_list)
+print("Done extracting drone pose in enu...")
+
 #Read rosbag file and extract velocity of moving platform
 print("Start extracting moving platform velocity in ned...")
 v_x_list =[]
@@ -143,6 +172,7 @@ for j in range(skipped_entries_at_start_of_episode,len(t_list)):
         writer = csv.writer(f)
         writer.writerow(row_list)
 print("Done extracting moving platform velocity in ned...")
+
 
 print("Start extracting ROSControlled status...")
 ROSControlled_list = []

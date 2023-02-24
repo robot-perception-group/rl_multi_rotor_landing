@@ -1,0 +1,7 @@
+#vmp_1_6 for training
+#static x_rpm_04 rpm_0_4 x_rpm_0_8 rpm_0_8 x_rpm_1_2 rpm_1_2 x_rpm_1_6 rpm_1_6 x_eight_shape eight_shape for four agents
+1.2 99  2.2 99 3.2 98  4.2 99 5.2 93 6.2 93
+1.2 100 2.2 99 3.2 100 4.2 96 5.2 95 6.2 96
+1.2 99  2.2 97  3.2 97 4.2 91 5.2 84 6.2 83
+1.2 84  2.2 84  3.2 79 4.2 88 5.2 79 6.2 75
+

@@ -11,13 +11,15 @@ from copy import deepcopy
 #Analysis params
 mp_edge_length_x = 1
 mp_edge_length_y = 1
-number_of_episodes = 250
+number_of_episodes = 150
 
 #Specify experiments
 case_id = 'vmp_1_6'
-exp_id = 'vmpexp_x_0_vmpexp_y_0_rmp'
-experiment_path = '/home/pgoldschmid/Desktop/exp_paper/'
-sims = ['sim_1','sim_2','sim_3','sim_4','sim_5','sim_6']
+exp_id = 'vmpexp_x_1_6_vmpexp_y_0_8_eight_shape'
+
+
+experiment_path = '/home/pgoldschmid/Desktop/exp_paper_20230109'
+sims = ['sim_1','sim_2','sim_3','sim_4']
 
 
 #Create list with file_paths
@@ -29,7 +31,7 @@ for sim in sims:
 datas = dict()
 data_lengths = []
 for sim in sims:
-    df = pd.read_csv(file_paths[sim],skiprows = 1,delimiter = ',') #Skip first landing trial which might not be complete
+    df = pd.read_csv(file_paths[sim],skiprows = 20,delimiter = ',') #Skip first landing trial which might not be complete
     df.columns = range(df.shape[1]) #Replace column names with integer values
     dfnp = df.to_numpy()
     datas[sim] = deepcopy(dfnp)
@@ -49,6 +51,10 @@ for sim in sims:
     for j in range(number_of_episodes):
         if abs(data[j,15]-data[j,21]) <= mp_edge_length_x/2 and abs(data[j,16]-data[j,22]) <= mp_edge_length_y/2:
             num_success += 1
+        else:
+            print("sim",sim,"ep.",j)
+            pass
+            # print("Ep.",j,"Fail:",sim,abs(data[j,15]-data[j,21]),abs(data[j,16]-data[j,22]))
     nums_success[sim] = num_success
     
 # print(nums_success)

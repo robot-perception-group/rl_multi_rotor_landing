@@ -62,7 +62,10 @@ class ViconObject():
         self.action_values = deepcopy(self.parameters.uav_parameters.initial_action_values) #Dictionary in which the current set points for the roll pitch yawrate thrust controller are stored
         self.done_numeric = 0
         self.max_number_of_steps_in_episode = self.parameters.rl_parameters.max_num_timesteps_episode
-        self.touchdown_altitude = self.parameters.simulation_parameters.touchdown_altitude
+        self.minimum_altitude = self.parameters.simulation_parameters.minimum_altitude
+        self.current_cur_step_counter = 0
+        self.mp_contact_occured = False
+
         return
   
     def publish_current_idx(self):

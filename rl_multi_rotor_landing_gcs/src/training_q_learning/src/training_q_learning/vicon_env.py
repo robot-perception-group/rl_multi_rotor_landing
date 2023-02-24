@@ -48,7 +48,7 @@ class ViconEnv(gym.Env):
         '''Class for setting up a gym based training environment that can be used in combination with Gazebo to train an agent to land on a moving platform.'''
         #Get parameters
         self.parameters = Parameters()
-        self.drone_name = drone_name
+        # self.drone_name = drone_name
         
         #Set the random number seed used for initializing the drone
         np.random.seed(self.parameters.rl_parameters.seed_init)
@@ -66,6 +66,11 @@ class ViconEnv(gym.Env):
         #Initialize action space
         self.action_strings = self.parameters.uav_parameters.action_strings
         self.action_values = deepcopy(self.parameters.uav_parameters.initial_action_values)
+        self.action_space = spaces.Discrete(len(self.parameters.uav_parameters.action_strings))
+
+        #Initialize observation space
+        dim_observation_space = len(self.parameters.uav_parameters.observation_msg_strings)
+        self.observation_space = spaces.Box(low=np.full((dim_observation_space),-1),high = np.full((dim_observation_space),1),dtype = np.float32)
         
         #Initialize variables required for logging system
         self.reward = 0
@@ -82,7 +87,7 @@ class ViconEnv(gym.Env):
         self.running_step_time = self.parameters.rl_parameters.running_step_time
 
         #Set parameters required for initilaization of drone after reset
-        self.drone_name = self.parameters.uav_parameters.drone_name
+        # self.drone_name = self.parameters.uav_parameters.drone_name
         self.max_x = self.parameters.simulation_parameters.init_max_x
         self.min_x = self.parameters.simulation_parameters.init_min_x
         self.max_y = self.parameters.simulation_parameters.init_max_y

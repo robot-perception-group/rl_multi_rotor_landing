@@ -45,19 +45,19 @@ from training_q_learning.parameters import Parameters
 parameters = Parameters()
 
 #Parameters
-node_name = 'compute_observation_node'
+node_name = 'vicon_compute_observation_node'
 drone_name = rospy.get_param(rospy.get_namespace()+node_name+'/drone_name','iris')   
 publish_hz = float(rospy.get_param(rospy.get_namespace()+node_name+'/publish_hz','10'))
-std_rel_p_x = float(rospy.get_param(rospy.get_namespace()+node_name+'/std_rel_p_x','0.25'))
-std_rel_p_y = float(rospy.get_param(rospy.get_namespace()+node_name+'/std_rel_p_y','0.25'))
-std_rel_p_z = float(rospy.get_param(rospy.get_namespace()+node_name+'/std_rel_p_z','0.1'))
-std_rel_v_x = float(rospy.get_param(rospy.get_namespace()+node_name+'/std_rel_v_x','0.1'))
-std_rel_v_y = float(rospy.get_param(rospy.get_namespace()+node_name+'/std_rel_v_y','0.1'))
-std_rel_v_z = float(rospy.get_param(rospy.get_namespace()+node_name+'/std_rel_v_z','0.05'))
+std_rel_p_x = float(rospy.get_param(rospy.get_namespace()+node_name+'/std_rel_p_x','0'))
+std_rel_p_y = float(rospy.get_param(rospy.get_namespace()+node_name+'/std_rel_p_y','0'))
+std_rel_p_z = float(rospy.get_param(rospy.get_namespace()+node_name+'/std_rel_p_z','0'))
+std_rel_v_x = float(rospy.get_param(rospy.get_namespace()+node_name+'/std_rel_v_x','0'))
+std_rel_v_y = float(rospy.get_param(rospy.get_namespace()+node_name+'/std_rel_v_y','0'))
+std_rel_v_z = float(rospy.get_param(rospy.get_namespace()+node_name+'/std_rel_v_z','0'))
 
 #Topic definition subscribers
-relative_position_topic = ('landing_simulation/relative_moving_platform_drone/state/pose',PoseStamped)
-relative_velocity_topic = ('landing_simulation/relative_moving_platform_drone/state/twist',TwistStamped)
+relative_position_topic = ('/vicon/relative_moving_platform_drone/state/pose',PoseStamped)
+relative_velocity_topic = ('/vicon/relative_moving_platform_drone/state/twist',TwistStamped)
 relative_acceleration_topic = ('landing_simulation/relative_moving_platform_drone/state/acceleration',Imu)
 
 #Action setpoint topic
@@ -85,7 +85,7 @@ class ObservationRelativeState():
         frames_equal = False
         ###Use the following line if IMUs are used
         #if self.relative_position.header.frame_id == self.relative_velocity.header.frame_id and self.relative_position.header.frame_id == self.relative_acceleration.header.frame_id and self.relative_velocity.header.frame_id == self.relative_acceleration.header.frame_id:
-        frame_ids = [self.relative_position.header.frame_id,self.relative_velocity.header.frame_id,self.relative_acceleration.header.frame_id,self.drone_state.pose.header.frame_id,self.drone_state.twist.header.frame_id]
+        frame_ids = [self.relative_position.header.frame_id,self.relative_velocity.header.frame_id,self.relative_acceleration.header.frame_id]#,self.drone_state.pose.header.frame_id,self.drone_state.twist.header.frame_id]
         if all([x == frame_ids[0] for x in frame_ids]):
             frames_equal = True
         else:    

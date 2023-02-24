@@ -17,10 +17,10 @@ fc_name = rospy.get_param(rospy.get_namespace()+node_name+'/fc_name','fc0')
 
 #Define topics
 #vicon topics
-vicon_drone_pos_topic = ('/vicon/drone/pose',PoseStamped)
-vicon_drone_vel_topic = ('/vicon/drone/twist',TwistStamped)
-vicon_mp_pos_topic = ('/vicon/moving_platform/pose_enu',PoseStamped)
-vicon_mp_vel_topic = ('/vicon/moving_platform/twist_enu',TwistStamped)
+vicon_drone_pos_topic = ('/vicon/drone/pose_enu',PoseStamped)
+vicon_drone_vel_topic = ('/vicon/drone/twist_enu',TwistStamped)
+vicon_mp_pos_topic = ('/vicon/moving_platform/pose_enu_filtered',PoseStamped)
+vicon_mp_vel_topic = ('/vicon/moving_platform/twist_enu_filtered',TwistStamped)
 
 #mp transformation topics
 vicon_mp_pos_ned_topic = ('/vicon/moving_platform/pose',PoseStamped)

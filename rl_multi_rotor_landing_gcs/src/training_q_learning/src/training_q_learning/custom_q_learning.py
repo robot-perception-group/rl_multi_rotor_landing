@@ -11,7 +11,7 @@ import time
 import pickle
 from training_q_learning.utils import create_log_dir_path
 from training_q_learning.parameters import Parameters
-from training_q_learning.landing_simulation_env import LandingSimulationEnv
+from training_q_learning.vicon_env import ViconEnv
 from training_q_learning.utils_multiresolution import get_discrete_state_from_ros_msg,initialize_grid_list,add_cur_step_lims_of_state
 from copy import deepcopy
 from training_q_learning.utils_q_learning import LogTraining
@@ -332,21 +332,17 @@ class QLearning():
         self.env.log_dir_path = log_dir_path
         return
 
-    def init_training_env(self, reset_length:int ):
+    def init_vicon_env(self, reset_length:int ):
         '''
         Function sets up the training environment and performs intial reset
         '''
-        print("Starting init procedure of training environment...")
-        self.env = gym.make('landing_simulation-v0')
+        print("Starting init procedure of vicon environment...")
+        self.env = gym.make('vicon-v0')
         self.env.reset()
-        self.env.unpause_sim()
         time.sleep(reset_length)
-        self.env.pause_sim()
         self.env.reset()
-        self.env.unpause_sim()
         time.sleep(reset_length)
-        self.env.pause_sim()
-        print("Init procedure of training environment completed.")
+        print("Init procedure of vicon environment completed.")
         return
 
     def double_q_learning(self):

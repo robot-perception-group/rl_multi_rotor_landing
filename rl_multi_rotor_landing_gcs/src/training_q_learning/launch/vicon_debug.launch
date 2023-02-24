@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+<param name="use_sim_time" value="false"/>
+    <node name="vicon_debug_node" pkg="training_q_learning" type="vicon_debug.py" output="screen" >
+    </node> 
+</launch>
