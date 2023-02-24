@@ -1,12 +1,20 @@
 # Reinforcement Learning based Autonomous Multi-Rotor Landing on Moving Platforms
 
-Welcome to the repository providing the code used for the paper
 
-*RL-based Autonomous Multi-Rotor Landing on Moving Platforms*
+Welcome to the repository providing the code used for the 
 
-by Pascal Goldschmid and Aamir Ahmad.
+*RL-based Autonomous Multi-Rotor Landing on Moving Platforms* 
+
+by Pascal Goldschmid and Aamir Ahmad. 
+
+
+
+You can read the paper [here]().
+
+Experimental data (training results, training log data, rosbag files of real flight experiments) can be downloaded [here](https://keeper.mpdl.mpg.de/d/158dba226d4244c1a432/).
 
 If you have any questions, comments or suggestions please contact pascal.goldschmid@ifr.uni-stuttgart.de
+![RL multi-rotor landing on moving platforms- image not available.](rl_landing.gif "RL multi-rotor landing on moving platforms") 
 
 ---
 ## General
@@ -80,7 +88,7 @@ source other_files/setup.bash
 Then, launch the simulation environment by running 
 
 ```
-cd rl_multi_rotor_landing/rl_multi_rotor_landing_sim
+cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_sim
 ./src/training_q_learning/launch/launch_environment_in_virtual_screens.sh SIM_ID UAV_NAME ROS_PORT GAZEBO_PORT
 ```
 Define the name of your environment by the parameter ```SIM_ID```. The parameter ```UAV_NAME``` can be used to select a vehicle from the [RotorS](https://github.com/ethz-asl/rotors_simulator) package. We used the UAV called "hummingbird". ```ROS_PORT``` and ```GAZEBO_PORT``` are required to run several indepedent trainings in simulation at the same time. For each training, select a unique pair of ports. For ```ROS_PORT```, a working value range constitute the integers 11311 - 11316 whereas for ```GAZEBO_PORT``` it is 11351 - 11356. An example to launch the simulation is
@@ -116,13 +124,15 @@ There are several steps to be executed during the training curriculum.
 
  4. Increment the value of the parameter ```curriculum_step``` by 1 in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file.
 
- 5. Replace the value of the variable ```exploration_rate_schedule``` in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file with ```{0:["lin",0,1,0,0]}```
- 6. Restart the training for the next curriculum step by running 
+ 5. Set the value of ```init_distribution ``` to ```uniform``` in the in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file.
+
+ 6. Replace the value of the variable ```exploration_rate_schedule``` in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file with ```{0:["lin",0,1,0,0]}```
+ 7. Restart the training for the next curriculum step by running 
     ```
     cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_sim
     ./src/training_q_learning/launch/launch_training.sh hummingbird 11311 11351
     ```  
- With the default settings, you can repeat the steps 3 to 6 four times to obtain a fully trained agent.
+ With the default settings, you can repeat the steps 3 to 7 four times to obtain a fully trained agent.
  The script [execute_training_curriculum.py](other_files/execute_training_curriculum.py) automates these steps.
 
 
@@ -145,6 +155,8 @@ self.initial_action_values: dict = {"pitch":0,  #[rad]
         }
 self.init_distribution = 'uniform'   
 self.init_altitude: float = 2.5
+self.minimum_altitude: float = 0.1
+
 ```
 
 Run the script 
@@ -161,18 +173,20 @@ You can use one of the scripts provided in the folder [experiment_evaluation](ex
 
 ## Running a custom training
 Running a custom setup requires several parameters in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file to be adapted. To determine their values required by the multi-resolution discretization scheme as described in the paper, you can run the script [compute_training_parameters.py](rl_multi_rotor_landing_sim/other_files/compute_training_parameters.py).
-
+Furthermore, you need to specifiy the properties of the rectilinear periodic movement (radius and velocity) to be performed by the platform during training in the file [landing_simulation.launch](rl_multi_rotor_landing_sim/src/training_q_learning/launch/landing_simulation.launch).
 # Setting up an experiment on real hardware
 ## General
-To evaluate an agent on real hardware, a Vicon system is required that is able to track the position and orientation of the UAV and the moving platform using marker detection. ROS nodes are provided that open an interface to the Vicon system to retrieve the required pose and twist data and publish it on the ROS network. Being equipped with a Raspberry Pi 4B running Ubuntu 20, the UAV is able to use this information as a fake GPS signal for the state estimation performed by the onboard flight controller. The RL agent to be evaluated is executed on a laptop running the [LibrePilot](https://www.librepilot.org/site/index.html) Ground Control Station that is used to switch between the different flight modes (manual attitude control, manual velocity control and RL agent), receive telemetry data from the FC and set up virtual limits for the fly zone for safety purposes.
-The UAV is the device in the network that provides the ROS master. 
+To evaluate an agent on real hardware, a Vicon system is required that is able to track the position and orientation of the UAV and the moving platform using marker detection. ROS nodes are provided that open an interface to the Vicon system to retrieve the required pose and twist data and publish it on the ROS network. Being equipped with a Raspberry Pi 4B running Ubuntu 20, the UAV is able to use this information as a fake GPS signal for the state estimation performed by the onboard flight controller. The RL agent to be evaluated is executed on a desktop computer running the [LibrePilot](https://www.librepilot.org/site/index.html) Ground Control Station that is used to switch between the different flight modes (manual attitude control, manual velocity control and RL agent), receive telemetry data from the FC and set up virtual limits for the fly zone for safety purposes.
+
+![UAV and moving platform- image not available.](copter_platform.png "UAV and moving platform") 
+
 
 ## Installation
 ### Preparing the Vicon system
 In order to function properly, the moving platform must be named *moving_platform_1* and the UAV must be named *copter_1* in the Vicon system.
 
 ### Preparing the ground control station
-Download the code and initialize the workspaces as described above on the laptop used as ground control station (gcs). 
+Download the code and initialize the workspaces as described above on the computer used as ground control station (gcs). 
 Prepare the catkin workspace of the gcs by running 
 ```
 cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_gcs
@@ -188,7 +202,7 @@ cd ~/rl_multi_rotor_landing/submodules/LibrePilot
 Click on *File --> GCS settings Import/Export* and import [this](rl_multi_rotor_landing_gcs/other_files/gcs_settings_for_copter.xml) file to load the required configuration of the 
 gcs. In *Tools --> Options --> IP Network Telemetry* enter the IP address of the Raspberry 4B of the UAV in the field *Host Name/Number* and choose the option *TCP*.
 
-In our experiments, we connected the gcs laptop via ethernet with the Vicon base station. Connection to the UAV is achieved via a Wi-Fi hotspot that is provided by the gcs.
+In our experiments, we connected the gcs computer via ethernet with the Vicon base station. Connection to the UAV is achieved via a Wi-Fi hotspot that is provided by an external access point.
 To create a connection to the Vicon base computer, install the ROS-package that provides a bridge to the Vicon system.
 ```
 sudo apt update
@@ -246,7 +260,10 @@ source other_files/setup.bash
 ```
 To make sure that the ROS network is initiated as soon as the UAV is powered up, you can set up [this](rl_multi_rotor_landing_uav/other_files/launch_bridges_in_virtual_screens.sh) script to be executed automatically (e.g. as a cron job) during the boot sequence.
 
-For our experiments, we equipped the UAV with a LibrePilot Revolution Flight Controller. After creating a connection to the FC using the gcs, you can import the [configuration file](rl_multi_rotor_landing_gcs/other_files/copter_settings.uav) in the gcs by clicking on *File--> Import UAV Settings*. 
+For our experiments, we equipped the UAV with a LibrePilot Revolution Flight Controller. After creating a connection to the FC using the gcs, you can import the [configuration file](rl_multi_rotor_landing_gcs/other_files/copter_settings_landing.uav) in the gcs by clicking on *File--> Import UAV Settings*. 
+
+### Setting up the moving platform
+For this project, we used [this](https://github.com/robot-perception-group/moving_platform_control.git) package to realize a platform moving autonomously on rails. For this purpose, a model train that pulls a wooden platform structure on wheels is controlled via ROS. For more details you can look through the package's readme. 
 
 ## Conducting the flight experiment
 Power up the UAV and wait until the ROS master has been initialized. Make sure that the Vicon system is able to detect both objects, the moving platform and the copter.
@@ -275,5 +292,5 @@ bash other_files/record_rosbag.bash <Your Flight Experiment ID name>
 ## Analyzing flight logs
 You can make the recorded rosbag file accessible to further processing in python by executing the script [extract_topics_from_rosbag.py](experiment_evaluation/extract_topics_from_rosbag.py). It will extract the required topics from the rosbag file and store them as .csv-files in a subdirectory with the same name as the flight experiment ID that was used for the rosbag file.
 To extract individual flights from these topics, run [extract_flights_from_rosbag_topics.py](experiment_evaluation/extract_flights_from_rosbag_topics.py).
-The flights can be plotted using the gnuplot script [plot_vicon_flight_data.gnuplot](experiment_evaluation/plot_vicon_flight_data.gnuplot).
-Success determination needs to be done manually. If the copter is above the moving platform at the moment of reaching the minimal altitude over the moving platform, the landing attempt is considered successful.
+The flights can be plotted using the gnuplot script [plot_vicon_flight_from_drone_state_estimate.gnuplot](experiment_evaluation/plot_vicon_flight_from_drone_state_estimate.gnuplot).
+Success determination needs to be done manually, i.e. the number of landing trials leading to a successful touchdown needs to be counted.
