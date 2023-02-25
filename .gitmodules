@@ -11,3 +11,6 @@
 [submodule "pid"]
 	path = submodules/pid
 	url = https://github.com/tasbolat1/pid.git
+[submodule "submodules/moving_platform_control"]
+	path = submodules/moving_platform_control
+	url = https://github.com/robot-perception-group/moving_platform_control.git

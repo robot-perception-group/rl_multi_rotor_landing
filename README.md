@@ -3,17 +3,16 @@
 
 Welcome to the repository providing the code used for the 
 
-*RL-based Autonomous Multi-Rotor Landing on Moving Platforms* 
+**RL-based Autonomous Multi-Rotor Landing on Moving Platforms**
 
 by Pascal Goldschmid and Aamir Ahmad. 
 
 
 
-You can read the paper [here]().
-
 Experimental data (training results, training log data, rosbag files of real flight experiments) can be downloaded [here](https://keeper.mpdl.mpg.de/d/158dba226d4244c1a432/).
 
 If you have any questions, comments or suggestions please contact pascal.goldschmid@ifr.uni-stuttgart.de
+#
 ![RL multi-rotor landing on moving platforms- image not available.](rl_landing.gif "RL multi-rotor landing on moving platforms") 
 
 ---
