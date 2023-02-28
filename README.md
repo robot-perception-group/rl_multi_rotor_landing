@@ -1,7 +1,7 @@
 # Reinforcement Learning based Autonomous Multi-Rotor Landing on Moving Platforms
 
 
-Welcome to the repository providing the code used for the 
+Welcome to the repository providing the code used for the paper
 
 **RL-based Autonomous Multi-Rotor Landing on Moving Platforms**
 
@@ -76,15 +76,6 @@ cd ~/rl_multi_rotor_landing
 ./init_workspaces.sh
 ```
 
-### Building the catkin workspace for training in simulation
-
-```
-cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_sim
-catkin_make
-source other_files/setup.bash
-```
-In any other terminal window in which you wish to run any function related to this workspace, run the above source command first.
-
 ## Running the code - quick start
 For a quick start, you can test the training procedure in simulation.
 
@@ -95,7 +86,8 @@ cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_sim
 catkin_make
 source other_files/setup.bash
 ```
-Then, launch the simulation environment by running 
+In any other terminal window in which you wish to run any function related to this workspace, run the above source command first.
+You can launch the simulation environment by running 
 
 ```
 cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_sim
