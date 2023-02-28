@@ -7,6 +7,8 @@ Welcome to the repository providing the code used for the
 
 by Pascal Goldschmid and Aamir Ahmad. 
 
+You can read the paper on arXiv [here](http://arxiv.org/abs/2302.13192).
+
 
 
 Experimental data (training results, training log data, rosbag files of real flight experiments) can be downloaded [here](https://keeper.mpdl.mpg.de/d/158dba226d4244c1a432/).
