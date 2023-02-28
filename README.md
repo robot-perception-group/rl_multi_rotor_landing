@@ -76,6 +76,15 @@ cd ~/rl_multi_rotor_landing
 ./init_workspaces.sh
 ```
 
+### Building the catkin workspace for training in simulation
+
+```
+cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_sim
+catkin_make
+source other_files/setup.bash
+```
+In any other terminal window in which you wish to run any function related to this workspace, run the above source command first.
+
 ## Running the code - quick start
 For a quick start, you can test the training procedure in simulation.
 
@@ -145,18 +154,18 @@ self.initial_action_values: dict = {"pitch":0,  #[rad]
                               "v_z":-0.1,       #[m/s]
                               "yaw":np.pi/4     #[rad]
                               }
-        self.done_criteria: dict = {
-                "max_lon_distance" : True,  #Bool
-                "max_lat_distance" : True,  #Bool
-                "max_ver_distance" : True,  #Bool
-                "max_num_timesteps" : True, #Bool
-                "minimum_altitude" : True, #Bool
-                "touchdown_contact" : True, #Bool
-                "success" : False,   #Bool
-        }
 self.init_distribution = 'uniform'   
 self.init_altitude: float = 2.5
 self.minimum_altitude: float = 0.1
+self.done_criteria: dict = {
+        "max_lon_distance" : True,  #Bool
+        "max_lat_distance" : True,  #Bool
+        "max_ver_distance" : True,  #Bool
+        "max_num_timesteps" : True, #Bool
+        "minimum_altitude" : True, #Bool
+        "touchdown_contact" : True, #Bool
+        "success" : False,   #Bool
+}
 
 ```
 
