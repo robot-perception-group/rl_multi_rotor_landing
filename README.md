@@ -3,7 +3,7 @@
 
 Welcome to the repository providing the code used for the paper
 
-**RL-based Autonomous Multi-Rotor Landing on Moving Platforms**
+**Reinforcement Learning based Autonomous Multi-Rotor Landing on Moving Platforms**
 
 by Pascal Goldschmid and Aamir Ahmad. 
 
