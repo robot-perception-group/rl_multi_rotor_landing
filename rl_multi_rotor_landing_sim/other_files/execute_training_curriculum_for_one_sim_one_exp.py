@@ -11,7 +11,7 @@ import numpy as np
 
 
 ## Input
-n_cs = 3
+n_cs = 4
 
 ## Calc
 #Functions
@@ -73,12 +73,8 @@ replace_line_in_textfile_that_contains(parameters_path,"self.exploration_rate_sc
 replace_text_in_file(parameters_path,"self.exploration_initial_eps: float = 1","self.exploration_initial_eps: float = 0")
 
 #Perform the subsequent curriculum steps
-suc_frac = 0.96
 for i in range(1,n_cs+1):
-    suc_frac_new = np.clip(suc_frac+0.01,0,1)
-    # replace_text_in_file(parameters_path,"self.successful_fraction: float = "+str(suc_frac),"self.successful_fraction: float = "+str(suc_frac_new))
     replace_text_in_file(parameters_path,"self.init_distribution: str = 'normal'","self.init_distribution: str = 'uniform'")
-    suc_frac = suc_frac_new
     replace_line_in_textfile_that_contains(parameters_path,"self.curriculum_step","        self.curriculum_step: int = "+str(i))
     last_final_results_path = get_last_final_result_path()
     replace_line_in_textfile_that_contains(parameters_path,"self.load_data_from","        self.load_data_from = '"+last_final_results_path+"'")
