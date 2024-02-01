@@ -49,7 +49,6 @@ platform_edge_length_x = 1
 platform_edge_length_y = 1
 
 #csv file names
-id = 'vmp_0_4_sim_1_vmpexp_x_0_vmpexp_y_0_rmp'
 file_path_csv = '/home/pgoldschmid/Desktop/exp/vmp_0_4/test_results/test_data_vmp_0_4_sim_1_vmpexp_x_0_vmpexp_y_0_rmp.csv'
 
 print("Begin / proceed logging...")

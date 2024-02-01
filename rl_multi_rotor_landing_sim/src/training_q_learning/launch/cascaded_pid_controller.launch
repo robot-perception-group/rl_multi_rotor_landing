@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+
+<launch>
+      <param name="use_sim_time" value="true"/>
+
+
+      <arg name="drone_name" default="hummingbird"/>
+      <arg name="axis_identifier" default="x"/>
+      <arg name="kp_ol" default="1"/>
+      <arg name="ki_ol" default="0"/>
+      <arg name="kd_ol" default="0"/>
+      <arg name="upper_limit_ol" default="5"/>
+      <arg name="lower_limit_ol" default="-5"/>
+      <arg name="windup_limit_ol" default="5"/>
+
+      <arg name="kp_il" default="1"/>
+      <arg name="ki_il" default="0"/>
+      <arg name="kd_il" default="0"/>
+      <arg name="upper_limit_il" default="5"/>
+      <arg name="lower_limit_il" default="-5"/>
+      <arg name="windup_limit_il" default="5"/>
+
+      <arg name = "std_rel_p_x" default = "0" />
+      <arg name = "std_rel_p_y" default = "0" />
+      <arg name = "std_rel_p_z" default = "0" />
+      <arg name = "std_rel_v_x" default = "0" />
+      <arg name = "std_rel_v_y" default = "0" />
+      <arg name = "std_rel_v_z" default = "0" />
+
+
+  <group ns="$(arg drone_name)">
+
+  <!-- <node pkg="rostopic" type="rostopic" name="v_z_setpoint_publisher" args="pub /$(arg drone_name)/training_action_interface/setpoint/v_z std_msgs/Float64 0 -r100" output="screen"/> -->
+
+
+
+
+
+    <node name="cascaded_pid_$(arg axis_identifier)" pkg="training_q_learning" type="cascaded_pid_controller.py" output="screen" >
+        <param name = "outer_loop_publish_hz" value = "50" />
+        <param name = "inner_loop_publish_hz" value = "100" />
+        <param name = "axis_identifier" value = "$(arg axis_identifier)" />
+        <param name = "relative_position_setpoint" value = "0" />
+        <param name = "drone_name" value ="$(arg drone_name)" />
+        <param name = "std_rel_p_x" value = "$(arg std_rel_p_x)" />
+        <param name = "std_rel_p_y" value = "$(arg std_rel_p_y)" />
+        <param name = "std_rel_p_z" value = "$(arg std_rel_p_z)" />
+        <param name = "std_rel_v_x" value = "$(arg std_rel_v_x)" />
+        <param name = "std_rel_v_y" value = "$(arg std_rel_v_y)" />
+        <param name = "std_rel_v_z" value = "$(arg std_rel_v_z)" />
+    </node> 
+
+    <node name="controller_cascaded_pid_$(arg axis_identifier)_ol" pkg="pid" type="controller" ns="cascaded_pid_$(arg axis_identifier)" output="screen" >
+        <param name="Kp" value="$(arg kp_ol)" />
+        <param name="Ki" value="$(arg ki_ol)" />
+        <param name="Kd" value="$(arg kd_ol)" />
+        <param name="upper_limit" value="$(arg upper_limit_ol)" />
+        <param name="lower_limit" value="$(arg lower_limit_ol)" />
+        <param name="windup_limit" value="$(arg windup_limit_ol)" />
+        <param name="max_loop_frequency" value="1000.0" />
+        <param name="min_loop_frequency" value="1.0" />
+        <param name="topic_from_controller" value="ol_relative_position/control_effort"/>
+        <param name="topic_from_plant" value="ol_relative_position/state"/>
+        <param name="setpoint_topic" value="ol_relative_position/setpoint"/>   
+    </node>
+
+    <node name="controller_cascaded_pid_$(arg axis_identifier)_il" pkg="pid" type="controller" ns="cascaded_pid_$(arg axis_identifier)" output="screen" >
+        <param name="Kp" value="$(arg kp_il)" />
+        <param name="Ki" value="$(arg ki_il)" />
+        <param name="Kd" value="$(arg kd_il)" />
+        <param name="upper_limit" value="$(arg upper_limit_il)" />
+        <param name="lower_limit" value="$(arg lower_limit_il)" />
+        <param name="windup_limit" value="$(arg windup_limit_il)" />
+        <param name="max_loop_frequency" value="1000.0" />
+        <param name="min_loop_frequency" value="1.0" />
+        <param name="topic_from_controller" value="il_relative_velocity/control_effort"/>     
+        <param name="topic_from_plant" value="il_relative_velocity/state"/>
+        <param name="setpoint_topic" value="il_relative_velocity/setpoint"/>   
+    </node>    
+  </group>  
+</launch>

@@ -56,14 +56,15 @@ class TrackLandingTrial():
                     
                 else:
                     file_path_failure = os.path.join(os.environ["ROS_PROJECT_ROOT"],"other_files","sounds","failure.mp3") 
-                    os.system("aplay "+os.environ["ROS_PROJECT_ROOT"]+"/src/LibrePilot/ground/gcs/src/share/sounds/default/whoopsound.wav &") 
+                    os.system("aplay "+os.environ["ROS_PROJECT_ROOT"]+"/src/LibrePilot/ground/gcs/src/share/sounds/default/warning.wav &") 
                     print(self.drone_pose.pose.position)
                     print(self.mp_pose.pose.position)
+                    time.sleep(1)
                     print("Failure!")
                 self.terminal_criteria_triggered = False
                 sound_duration = rospy.Time.now()-self.start_time
 
-                if sound_duration.secs >= 4:
+                if sound_duration.secs >= 10:
                     self.terminal_criteria_triggered = True
 
         else:

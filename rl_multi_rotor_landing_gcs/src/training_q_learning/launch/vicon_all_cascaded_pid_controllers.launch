@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+
+<launch>
+      <arg name="drone_name" default="copter"/>
+      <arg name="yaw" default="0.78539"/>
+	  <!-- for v_z: positive value -> descending, negative value -> ascending -->
+      <arg name="v_z" default="0.1"/> 
+
+      <param name="use_sim_time" value="false"/>
+
+		<include file="$(find training_q_learning)/launch/vicon_cascaded_pid_interface.launch">
+           <arg name = "publish_hz" value = "100" />
+           <arg name = "drone_name" value = "$(arg drone_name)" /> 
+        </include> 
+
+		<include file="$(find training_q_learning)/launch/vicon_cascaded_pid_controller.launch">
+
+		    <arg name="axis_identifier" value="x"/>
+			<arg name="drone_name" value="$(arg drone_name)"/>
+
+			<arg name = "std_rel_p_x" value = "0" />
+			<arg name = "std_rel_p_y" value = "0" />
+			<arg name = "std_rel_p_z" value = "0" />
+			<arg name = "std_rel_v_x" value = "0" />
+			<arg name = "std_rel_v_y" value = "0" />
+			<arg name = "std_rel_v_z" value = "0" />
+
+		    <arg name="kp_ol" value="3"/>
+		    <arg name="ki_ol" value="0"/>
+		    <arg name="kd_ol" value="0"/>
+		    <arg name="upper_limit_ol" value="0.8"/> <!--max v_x [m/s]-->
+		    <arg name="lower_limit_ol" value="-0.8"/><!--min v_x [m/s]-->
+		    <arg name="windup_limit_ol" value="5"/>
+
+            <arg name="kp_il" value="8"/>
+		    <arg name="ki_il" value="1"/>
+		    <arg name="kd_il" value="0"/>
+		    <arg name="upper_limit_il" value="5.58913"/> <!--max pitch [deg]-->
+		    <arg name="lower_limit_il" value="-5.58913"/> <!--min pitch [deg]-->
+		    <arg name="windup_limit_il" value="5"/>
+
+        </include> 
+
+
+        <include file="$(find training_q_learning)/launch/vicon_cascaded_pid_controller.launch">
+        
+		    <arg name="axis_identifier" value="y"/>
+			<arg name="drone_name" value="$(arg drone_name)"/>
+
+			<arg name = "std_rel_p_x" value = "0" />
+			<arg name = "std_rel_p_y" value = "0" />
+			<arg name = "std_rel_p_z" value = "0" />
+			<arg name = "std_rel_v_x" value = "0" />
+			<arg name = "std_rel_v_y" value = "0" />
+			<arg name = "std_rel_v_z" value = "0" />
+
+		    <arg name="kp_ol" value="3"/>
+		    <arg name="ki_ol" value="0"/>
+		    <arg name="kd_ol" value="0"/>
+		    <arg name="upper_limit_ol" value="0.8"/> <!--max v_y [m/s]-->
+		    <arg name="lower_limit_ol" value="-0.8"/><!--min v_y [m/s]-->
+		    <arg name="windup_limit_ol" value="5"/>
+
+            <arg name="kp_il" value="-8"/>
+		    <arg name="ki_il" value="-1"/>
+		    <arg name="kd_il" value="0"/>
+		    <arg name="upper_limit_il" value="5.58913"/> <!--max roll [deg]-->
+		    <arg name="lower_limit_il" value="-5.58913"/> <!--min roll [deg]-->
+		    <arg name="windup_limit_il" value="5"/>
+        </include> 
+
+		<node pkg="rostopic" type="rostopic" name="pid_yaw_setpoint_publisher" args="pub /$(arg drone_name)/vicon_cascaded_pid_interface/yaw/setpoint std_msgs/Float64 $(arg yaw) -r100" output="screen"/>
+		<node pkg="rostopic" type="rostopic" name="pid_v_z_setpoint_publisher" args="pub /$(arg drone_name)/vicon_cascaded_pid_interface/v_z/setpoint std_msgs/Float64 $(arg v_z) -r100" output="screen"/>
+
+
+</launch>

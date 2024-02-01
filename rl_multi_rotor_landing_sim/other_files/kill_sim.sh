@@ -11,6 +11,7 @@ screen -S "$(echo $SIM_ID)_analysis" -p 0 -X quit
 screen -S "$(echo $SIM_ID)_vmp_x_setpoint" -p 0 -X quit
 screen -S "$(echo $SIM_ID)_vmp_y_setpoint" -p 0 -X quit
 screen -S "$(echo $SIM_ID)_test_model" -p 0 -X quit
+screen -S "$(echo $SIM_ID)_cascaded_pid_interface" -p 0 -X quit
 
 echo "All screens of simulation '$(echo $SIM_ID)' killed..."
 echo "List of remaining screens:"

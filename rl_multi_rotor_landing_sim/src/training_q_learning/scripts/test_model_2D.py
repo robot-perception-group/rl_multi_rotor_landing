@@ -99,7 +99,7 @@ if __name__ == '__main__':
     q_learning_lon.env.test_mode_activated = True
 
     #Enter loop
-    for _ in range(100000):
+    for _ in range(1000000):
 
         if done == True:
             #If a terminal condition has been reached, reset simulation

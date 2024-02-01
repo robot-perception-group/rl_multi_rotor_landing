@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+
+<launch>
+      <arg name="drone_name" default="hummingbird"/>
+
+      <param name="use_sim_time" value="true"/>
+
+		<include file="$(find training_q_learning)/launch/cascaded_pid_interface.launch">
+           <arg name = "publish_hz" value = "100" />
+           <arg name = "drone_name" value = "$(arg drone_name)" /> 
+        </include> 
+
+
+		<include file="$(find training_q_learning)/launch/cascaded_pid_controller.launch">
+
+		    <arg name="axis_identifier" value="x"/>
+
+			<arg name = "std_rel_p_x" value = "0" />
+			<arg name = "std_rel_p_y" value = "0" />
+			<arg name = "std_rel_p_z" value = "0" />
+			<arg name = "std_rel_v_x" value = "0" />
+			<arg name = "std_rel_v_y" value = "0" />
+			<arg name = "std_rel_v_z" value = "0" />
+
+		    <arg name="kp_ol" value="3"/>
+		    <arg name="ki_ol" value="0"/>
+		    <arg name="kd_ol" value="0"/>
+		    <arg name="upper_limit_ol" value="3.39"/> <!--max v_x [m/s]-->
+		    <arg name="lower_limit_ol" value="-3.39"/><!--min v_x [m/s]-->
+		    <arg name="windup_limit_ol" value="5"/>
+
+            <arg name="kp_il" value="-8"/>
+		    <arg name="ki_il" value="-1"/>
+		    <arg name="kd_il" value="0"/>
+		    <arg name="upper_limit_il" value="21.37723"/> <!--max pitch [deg]-->
+		    <arg name="lower_limit_il" value="-21.37723"/> <!--min pitch [deg]-->
+		    <arg name="windup_limit_il" value="5"/>
+
+        </include> 
+
+
+        <include file="$(find training_q_learning)/launch/cascaded_pid_controller.launch">
+        
+		    <arg name="axis_identifier" value="y"/>
+
+			<arg name = "std_rel_p_x" value = "0" />
+			<arg name = "std_rel_p_y" value = "0" />
+			<arg name = "std_rel_p_z" value = "0" />
+			<arg name = "std_rel_v_x" value = "0" />
+			<arg name = "std_rel_v_y" value = "0" />
+			<arg name = "std_rel_v_z" value = "0" />
+
+		    <arg name="kp_ol" value="3"/>
+		    <arg name="ki_ol" value="0"/>
+		    <arg name="kd_ol" value="0"/>
+		    <arg name="upper_limit_ol" value="3.39"/> <!--max v_y [m/s]-->
+		    <arg name="lower_limit_ol" value="-3.39"/><!--min v_y [m/s]-->
+		    <arg name="windup_limit_ol" value="5"/>
+
+            <arg name="kp_il" value="8"/>
+		    <arg name="ki_il" value="1"/>
+		    <arg name="kd_il" value="0"/>
+		    <arg name="upper_limit_il" value="21.37723"/> <!--max roll [deg]-->
+		    <arg name="lower_limit_il" value="-21.37723"/> <!--min roll [deg]-->
+		    <arg name="windup_limit_il" value="5"/>
+        </include> 
+
+        <include file="$(find training_q_learning)/launch/cascaded_pid_controller.launch">
+        
+		    <arg name="axis_identifier" value="z"/>
+
+			<arg name = "std_rel_p_x" value = "0" />
+			<arg name = "std_rel_p_y" value = "0" />
+			<arg name = "std_rel_p_z" value = "0" />
+			<arg name = "std_rel_v_x" value = "0" />
+			<arg name = "std_rel_v_y" value = "0" />
+			<arg name = "std_rel_v_z" value = "0" />
+
+		    <arg name="kp_ol" value="1"/>
+		    <arg name="ki_ol" value="0.0"/>
+		    <arg name="kd_ol" value="0"/>
+		    <arg name="upper_limit_ol" value="0.1"/> <!--max v_z [m/s]--> 
+		    <arg name="lower_limit_ol" value="-0.1"/><!--min v_z [m/s]-->
+		    <arg name="windup_limit_ol" value="5"/>
+
+
+            <arg name="kp_il" value="-4"/>
+		    <arg name="ki_il" value="-2"/>
+		    <arg name="kd_il" value="-0"/>
+		    <arg name="upper_limit_il" value="20"/> <!--max thrust [N]-->
+		    <arg name="lower_limit_il" value="0"/>  <!--min thrust [N]-->
+		    <arg name="windup_limit_il" value="5"/>
+
+        </include> 
+
+
+    <group ns="$(arg drone_name)">
+
+    <node pkg="rostopic" type="rostopic" name="pid_yaw_setpoint_publisher" args="pub /$(arg drone_name)/cascaded_pid_interface/yaw/setpoint std_msgs/Float64 0.78539 -r100" output="screen"/>
+        
+		<node name="controller_yaw" pkg="pid" type="controller" ns="pid_yaw" output="screen" >
+            <param name="node_name" value="pid_yaw" />
+            <param name="Kp" value="8" />
+            <param name="Ki" value="1.0" />
+            <param name="Kd" value="0" />
+            <param name="upper_limit" value="3.141592" />
+            <param name="lower_limit" value="-3.141592" />
+            <param name="windup_limit" value="5" />
+            <param name="max_loop_frequency" value="1000.0" />
+            <param name="min_loop_frequency" value="1000.0" />
+            <param name="topic_from_controller" value="/$(arg drone_name)/cascaded_pid_interface/yaw/control_effort"/>
+            <param name="topic_from_plant" value="/$(arg drone_name)/cascaded_pid_interface/yaw/state"/>
+            <param name="setpoint_topic" value="/$(arg drone_name)/cascaded_pid_interface/yaw/setpoint"/>   
+        </node> 
+    </group>
+    
+
+
+
+
+</launch>

@@ -168,12 +168,16 @@ include_directories(
    scripts/training_action_interface.py
    scripts/copy_parameters.py
    scripts/training.py
+   scripts/training_ablation_study_all_states.py
    scripts/publish_stability_axes.py
    scripts/compute_relative_state_moving_platform_drone.py
    scripts/analysis_node_2D.py
    scripts/test_model_2D.py
+   scripts/test_cascaded_pid.py
    scripts/debug_node.py
    scripts/log_topic_freqs.py
+   scripts/cascaded_pid_controller.py
+   scripts/cascaded_pid_interface.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 

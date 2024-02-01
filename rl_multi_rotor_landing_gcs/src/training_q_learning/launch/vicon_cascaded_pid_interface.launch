@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>  
+<param name="use_sim_time" value="false"/>
+<arg name="publish_hz" default="100"/>
+<arg name="drone_name" default="hummingbird"/>
+<group ns="$(arg drone_name)">
+    <node name="vicon_cascaded_pid_interface" pkg="training_q_learning" type="vicon_cascaded_pid_interface.py" output="screen" >
+        <param name = "publish_hz" value = "$(arg publish_hz)" />
+        <param name = "drone_name" value = "$(arg drone_name)" /> 
+    </node> 
+</group>
+</launch>

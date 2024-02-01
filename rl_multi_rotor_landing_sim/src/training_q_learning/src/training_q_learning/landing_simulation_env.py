@@ -472,6 +472,27 @@ class LandingSimulationEnv(gym.Env):
         self.time_step_error_publisher.publish(time_step_error_msg)
 
         return current_state_idx_lon,current_state_idx_lat, done, info
+    
+
+    def external_controller_step(self,freq):
+        #Let simulation run for one timestep and determine the elapsed time using the wall clock
+        self.unpause_sim()
+        t_start_f = time.time()
+        rospy.sleep(1/freq)
+        t_stop_f = time.time()
+        self.pause_sim()
+
+        (done,_) = self.landing_simulation_object.process_data()
+
+        #Publish results of time measurement
+        duration_step = t_stop_f-t_start_f
+        execution_frequency_msg = Float64()
+        execution_frequency_msg.data = 1/duration_step
+        self.step_execution_frequency_publisher.publish(execution_frequency_msg)
+        time_step_error_msg = Float64()
+        time_step_error_msg.data = self.running_step_time-duration_step
+        self.time_step_error_publisher.publish(time_step_error_msg)
+        return done
 
 
 if __name__ == '__main__':

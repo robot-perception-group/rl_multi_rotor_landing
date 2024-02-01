@@ -176,6 +176,32 @@ You can use one of the scripts provided in the folder [experiment_evaluation](ex
 ## Running a custom training
 Running a custom setup requires several parameters in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file to be adapted. To determine their values required by the multi-resolution discretization scheme as described in the paper, you can run the script [compute_training_parameters.py](rl_multi_rotor_landing_sim/other_files/compute_training_parameters.py).
 Furthermore, you need to specifiy the properties of the rectilinear periodic movement (radius and velocity) to be performed by the platform during training in the file [landing_simulation.launch](rl_multi_rotor_landing_sim/src/training_q_learning/launch/landing_simulation.launch).
+
+## Running the cascaded PI controller
+Besides the RL approach, also a cascaded PI controller is implemented. In order to run it, the following set of commands has to be executed.
+```
+cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_sim
+source other_files/setup.bash
+./src/training_q_learning/launch/launch_cascaded_pid_environment_in_virtual_screens.sh SIM_ID UAV_NAME ROS_PORT GAZEBO_PORT
+```
+Replace SIM_ID, UAV_NAME, ROS_PORT and GAZEBO_PORT with suitable values (see above for an example). This opens the Gazebo simulator with all required ROS nodes running in virtual screens.
+In a new terminal window run 
+```
+source other_files/setup.bash
+source other_files/prepare_terminal_window.sh ROS_PORT GAZEBO_PORT
+roslaunch training_q_learning all_cascaded_pid_controllers.launch
+```
+ Replace ROS_PORT, and GAZEBO_PORT values matching those of the previously launched scripts. This launches a ROS node creating and running the different instances of the PID controllers. The respective controller gains can be set in the file [all_cascaded_pid_controllers.launch](/rl_multi_rotor_landing_sim/src/training_q_learning/launch/all_cascaded_pid_controllers.launch).
+In another terminal run
+```
+source other_files/setup.bash
+source other_files/prepare_terminal_window.sh ROS_PORT GAZEBO_PORT
+roslaunch training_q_learning test_cascaded_pid.launch drone_name:=UAV_NAME
+```
+ Replace ROS_PORT, GAZEBO_PORT and UAV_NAME values matching those of the previously launched scripts. This launches the automatic reset of the UAV after the completion of a landing attempt. The corresponding parameters regarding initial altitude, size of fly zone, etc. can be specified in the [parameter file](/rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py).
+The successful and failed landing attempts can be logged with the analysis script as described above. For evaluation of the log file, you can use [this](/experiment_evaluation/success_determination_cascaded_pid.py) script.
+
+
 # Setting up an experiment on real hardware
 ## General
 To evaluate an agent on real hardware, a Vicon system is required that is able to track the position and orientation of the UAV and the moving platform using marker detection. ROS nodes are provided that open an interface to the Vicon system to retrieve the required pose and twist data and publish it on the ROS network. Being equipped with a Raspberry Pi 4B running Ubuntu 20, the UAV is able to use this information as a fake GPS signal for the state estimation performed by the onboard flight controller. The RL agent to be evaluated is executed on a desktop computer running the [LibrePilot](https://www.librepilot.org/site/index.html) Ground Control Station that is used to switch between the different flight modes (manual attitude control, manual velocity control and RL agent), receive telemetry data from the FC and set up virtual limits for the fly zone for safety purposes.
@@ -267,19 +293,44 @@ For our experiments, we equipped the UAV with a LibrePilot Revolution Flight Con
 ### Setting up the moving platform
 For this project, we used [this](https://github.com/robot-perception-group/moving_platform_control.git) package to realize a platform moving autonomously on rails. For this purpose, a model train that pulls a wooden platform structure on wheels is controlled via ROS. For more details you can look through the package's readme. 
 
-## Conducting the flight experiment
-Power up the UAV and wait until the ROS master has been initialized. Make sure that the Vicon system is able to detect both objects, the moving platform and the copter.
+## Conducting the flight experiment using the RL controller
+Power up the UAV. Make sure that the Vicon system is able to detect both objects, the moving platform and the copter.
 Then, launch the ROS nodes by running 
 ```
 cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_gcs
-./src/training_q_learning/launch/launch_vicon_environment_in_virtual_screens.sh vicon 11311 11351
+./src/training_q_learning/launch/launch_vicon_environment_in_virtual_screens.sh vicon copter 11311 11351
 ```
 Prepare the RL agent to be executed whenever the command is given by the remote control or the gcs.
 ```
 cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_gcs
 ./rl_multi_rotor_landing_gcs/src/training_q_learning/launch/launch_vicon_test_model_2D.sh copter 11311 11351
 ```
-Now you can take-off, bring the UAV into a hover condition within the fly zone and activate the RL agent. Deactivate it as soon as the copter is close to the moving platform since a touchdown controller with motor deactivation is not implemented.
+Now you can take-off, bring the UAV into a hover state within the fly zone and activate the cascaded PI controller. Deactivate it as soon as the copter is close to the moving platform since a touchdown controller with motor deactivation is not implemented.
+
+
+## Conducting the flight experiment using the cascaded PI controller
+Power up the UAV. Make sure that the Vicon system is able to detect both objects, the moving platform and the copter.
+Then, launch the ROS nodes by running 
+```
+cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_gcs
+./src/training_q_learning/launch/launch_vicon_environment_in_virtual_screens.sh vicon copter 11311 11351
+```
+Launch the cascaded PID controller interface in a new terminal by running
+```
+cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_gcs
+source other_files/setup.bash
+source other_files/prepare_terminal_window.sh 11311 11351
+roslaunch training_q_learning vicon_cascaded_pid_interface.launch
+```
+Launch the cascaded PI controller in a new terminal window by running
+```
+cd ~/rl_multi_rotor_landing/rl_multi_rotor_landing_gcs
+source other_files/setup.bash
+source other_files/prepare_terminal_window.sh 11311 11351
+roslaunch training_q_learning vicon_all_cascaded_pid_controllers.launch yaw:=0.78539 v_z:=0.1
+```
+By means of the parameters *yaw* and *v_z* you can set the orientation around the vertical axis of the UAV in rad as well as the vertical descend velocity in m/s (positive values indicate descend).
+Now you can take-off, bring the UAV into a hover state within the fly zone and activate the RL agent. Deactivate it as soon as the copter is close to the moving platform since a touchdown controller with motor deactivation is not implemented.
 
 ## Logging flight data
 You can record a rosbag file during the flight experiments.
