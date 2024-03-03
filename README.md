@@ -117,7 +117,7 @@ There are several steps to be executed during the training curriculum.
     ```
  2. After the training has finished, increment the value of the parameter ```number_new_curriculum_steps``` by 1 in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file.    
 
- 3. Update the parameter ```load_training_from``` in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file with the path to the latest results that have been stored.  
+ 3. Update the parameter ```load_data_from``` in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file with the path to the latest results that have been stored.  
     By default, the training results are stored [here](rl_multi_rotor_landing_sim/src/training_q_learning/training_results).
     An example path can look like this 
     ```
@@ -135,11 +135,11 @@ There are several steps to be executed during the training curriculum.
     ./src/training_q_learning/launch/launch_training.sh hummingbird 11311 11351
     ```  
  With the default settings, you can repeat the steps 3 to 7 four times to obtain a fully trained agent.
- The script [execute_training_curriculum.py](other_files/execute_training_curriculum.py) automates these steps.
+ The script [execute_training_curriculum_for_one_sim_one_exp.py](rl_multi_rotor_landing_sim/other_files/execute_training_curriculum_for_one_sim_one_exp.py) automates these steps.
 
 
 ### Testing an agent
-To test an agent in simulation, update the value ```load_training_from``` in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file with the path to the latest result. Furthermore, replace the respective parameters with the following values
+To test an agent in simulation, update the value ```load_data_from``` in the [parameters](rl_multi_rotor_landing_sim/src/training_q_learning/src/training_q_learning/parameters.py) file with the path to the latest result. Furthermore, replace the respective parameters with the following values
 ```
 self.initial_action_values: dict = {"pitch":0,  #[rad]
                               "roll":0,         #[rad]
