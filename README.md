@@ -7,7 +7,7 @@ Welcome to the repository providing the code used for the paper
 
 by Pascal Goldschmid and Aamir Ahmad. 
 
-You can read the paper on arXiv [here](http://arxiv.org/abs/2302.13192).
+You can read the paper on arXiv [here](http://arxiv.org/abs/2302.13192v2).
 
 
 
