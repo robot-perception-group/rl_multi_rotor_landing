@@ -9,17 +9,18 @@ import pandas as pd
 from copy import deepcopy
 
 #Analysis params
-mp_edge_length_x = 1
-mp_edge_length_y = 1
+mp_edge_length_x = 0.5
+mp_edge_length_y = 0.5
 number_of_episodes = 150
 
 #Specify experiments
-case_id = 'vmp_1_6'
-exp_id = 'vmpexp_x_1_6_vmpexp_y_0_8_eight_shape'
+case_id = 'vmp_0_4_real'
+exp_id = 'vmpexp_x_0_vmpexp_y_0_rpm_noise'
 
 
-experiment_path = '/home/pgoldschmid/Desktop/exp_paper_20230109'
+experiment_path = '/home/pgoldschmid/Downloads/exp_paper (2)/exp_paper/simulation_data/RL'
 sims = ['sim_1','sim_2','sim_3','sim_4']
+sims = ['sim_3']
 
 
 #Create list with file_paths

@@ -206,7 +206,7 @@ class LandingSimulationEnv(gym.Env):
 
         #Compute the init position within the specified fly zone ('absolute') or relative to the moving platform ('relative'). Clip to make sure the drone is not initialized outside the flyzone
         if self.parameters.simulation_parameters.init_mode == 'relative':
-            init_drone.pose.position.x = np.clip(x_init + object_coordinates_moving_platform.pose.position.x,-self.parameters.simulation_parameters.max_abs_p_x,self.parameters.simulation_parameters.max_abs_p_y)
+            init_drone.pose.position.x = np.clip(x_init + object_coordinates_moving_platform.pose.position.x,-self.parameters.simulation_parameters.max_abs_p_x,self.parameters.simulation_parameters.max_abs_p_x)
             init_drone.pose.position.y = np.clip(y_init + object_coordinates_moving_platform.pose.position.y,-self.parameters.simulation_parameters.max_abs_p_y,self.parameters.simulation_parameters.max_abs_p_y)
         
         elif self.parameters.simulation_parameters.init_mode == 'absolute':

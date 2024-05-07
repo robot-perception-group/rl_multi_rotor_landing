@@ -8,9 +8,10 @@ from datetime import datetime, timedelta
 
 
 sim_ids = ['sim_1','sim_2','sim_3','sim_4']
+sim_ids = ['sim_1']
 tb_string = 'training_q_learning'
-training_id = 'vmp_0_4_real'
-experiment_path = '/home/pgoldschmid/Desktop/exp_paper_20230109/'
+training_id = 'vmp_1_6'
+experiment_path = '/home/pgoldschmid/Downloads/exp_paper (2)/exp_paper/simulation_data/RL'
 training_lengths_dict = dict()
 training_nums_of_episodes_dict = dict()
 
