@@ -15,7 +15,7 @@ set title "Agent Frequency"
 
 # Set the labels for the x and y axes
 set ylabel "Agent frequency f_{ag} [hz]"
-set xlabel "Angular Velocity of Moving Platform [1/s^2]"
+set xlabel "Angular Velocity of Moving Platform [1/s]"
 
 # Define the range for parameter 1
 set xrange [0:3]
