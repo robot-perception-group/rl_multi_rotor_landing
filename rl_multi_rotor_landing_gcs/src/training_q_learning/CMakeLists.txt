@@ -178,7 +178,6 @@ include_directories(
    scripts/vicon_debug.py
    scripts/vicon_cascaded_pid_controller.py
    scripts/vicon_cascaded_pid_interface.py
-   scripts/vicon_test_cascaded_pid.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 
