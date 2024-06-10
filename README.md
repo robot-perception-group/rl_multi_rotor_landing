@@ -1,13 +1,13 @@
 # Reinforcement Learning based Autonomous Multi-Rotor Landing on Moving Platforms
 
 
-Welcome to the repository providing the code used for the paper
+Welcome to the repository providing the code used for the paper 
 
 **Reinforcement Learning based Autonomous Multi-Rotor Landing on Moving Platforms**
 
-by Pascal Goldschmid and Aamir Ahmad. 
+by Pascal Goldschmid and Aamir Ahmad.
 
-You can read the paper on arXiv [here](http://arxiv.org/abs/2302.13192).
+The paper was published as open access in the journal [Springer - Autonomous Robots](https://link.springer.com/journal/10514) and is available [here](https://link.springer.com/article/10.1007/s10514-024-10162-8).
 
 
 
