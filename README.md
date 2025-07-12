@@ -17,6 +17,26 @@ If you have any questions, comments or suggestions please contact pascal.goldsch
 #
 ![RL multi-rotor landing on moving platforms- image not available.](rl_landing.gif "RL multi-rotor landing on moving platforms") 
 
+If you use or work, please cite it as 
+
+```
+@article{cite-key,
+	author = {Goldschmid, Pascal and Ahmad, Aamir},
+	date = {2024/06/06},
+	doi = {10.1007/s10514-024-10162-8},
+	id = {Goldschmid2024},
+	isbn = {1573-7527},
+	journal = {Autonomous Robots},
+	number = {4},
+	pages = {13},
+	title = {Reinforcement learning based autonomous multi-rotor landing on moving platforms},
+	url = {https://doi.org/10.1007/s10514-024-10162-8},
+	volume = {48},
+	year = {2024},
+	bdsk-url-1 = {https://doi.org/10.1007/s10514-024-10162-8}}
+
+```
+
 ---
 ## General
 ### Scope of the code
@@ -349,4 +369,6 @@ The flights can be plotted using the gnuplot script [plot_vicon_flight_from_dron
 Success determination needs to be done manually, i.e. the number of landing trials leading to a successful touchdown needs to be counted.
 
 
-*Disclaimer*: Use at own risk. The author, contributors and associated affiliations cannot be held responsible for any damage to hardware or persons.
+**Disclaimer**
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
