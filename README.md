@@ -7,7 +7,7 @@ Welcome to the repository providing the code used for the paper
 
 by Pascal Goldschmid and Aamir Ahmad.
 
-The paper is available as [open access publication](https://link.springer.com/article/10.1007/s10514-024-10162-8) in the journal [Springer - Autonomous Robots](https://link.springer.com/journal/10514) 
+The paper is available as [open access publication](https://link.springer.com/article/10.1007/s10514-024-10162-8) in the journal [Springer - Autonomous Robots].(https://link.springer.com/journal/10514) 
 
 
 
