@@ -367,8 +367,3 @@ You can make the recorded rosbag file accessible to further processing in python
 To extract individual flights from these topics, run [extract_flights_from_rosbag_topics.py](experiment_evaluation/extract_flights_from_rosbag_topics.py).
 The flights can be plotted using the gnuplot script [plot_vicon_flight_from_drone_state_estimate.gnuplot](experiment_evaluation/plot_vicon_flight_from_drone_state_estimate.gnuplot).
 Success determination needs to be done manually, i.e. the number of landing trials leading to a successful touchdown needs to be counted.
-
-
-**Disclaimer**
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
